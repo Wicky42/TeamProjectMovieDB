@@ -23,8 +23,6 @@ class MovieControllerTest {
 
     @Test
     void shouldReturnMovieByTitle() throws Exception {
-
-        // 🧩 Testdaten
         Movie movie = new Movie(
                 "Some title",
                 "some-poster-path.jpg",
@@ -44,4 +42,12 @@ class MovieControllerTest {
                 .andExpect(jsonPath("$.year").value("2026"))
                 .andExpect(jsonPath("$.genre").value("Action"));
     }
+
+    @Test
+    void shouldReturn400WhenTitleMissing() throws Exception {
+        mockMvc.perform(get("/api/movies"))
+                .andExpect(status().isBadRequest());
+    }
+
+
 }
