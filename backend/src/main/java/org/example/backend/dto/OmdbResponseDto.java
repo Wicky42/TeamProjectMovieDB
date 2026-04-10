@@ -10,7 +10,7 @@ public class OmdbResponseDto {
     private String title;
 
     @JsonProperty("Year")
-    private String year;
+    private int year;
 
     @JsonProperty("Genre")
     private String genre;

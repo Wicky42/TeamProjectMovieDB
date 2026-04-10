@@ -3,7 +3,7 @@ package org.example.backend.domain;
 public record Movie(
         String title,
         String poster,
-        String year,
+        int year,
         String type,
         String imdbID,
         String genre,
