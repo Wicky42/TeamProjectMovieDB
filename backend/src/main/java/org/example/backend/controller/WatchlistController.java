@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/watchlists")
-public class WatchlistController {
+class WatchlistController {
   private final WatchlistService watchlistService;
 
   public WatchlistController(WatchlistService watchlistService) {
