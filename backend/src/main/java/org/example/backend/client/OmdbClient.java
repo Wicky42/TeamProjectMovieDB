@@ -1,6 +1,7 @@
 package org.example.backend.client;
 
-import org.example.backend.dto.OmdbResponseDto;
+import org.example.backend.dto.OmdbMovieDetailsDto;
+import org.example.backend.dto.OmdbSearchResponseDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -18,14 +19,14 @@ public class OmdbClient {
                 .build();
     }
 
-    public OmdbResponseDto findByTitle(String title) {
-        OmdbResponseDto response = restClient.get()
+    public OmdbMovieDetailsDto findByTitle(String title) {
+        OmdbMovieDetailsDto response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("apikey", apiKey)
                         .queryParam("t", title)
                         .build())
                 .retrieve()
-                .body(OmdbResponseDto.class);
+                .body(OmdbMovieDetailsDto.class);
 
         if (response == null) {
             throw new RuntimeException("Keine Antwort von OMDb");
@@ -39,4 +40,23 @@ public class OmdbClient {
     }
 
 
+    public OmdbSearchResponseDto findMovies(String title) {
+        OmdbSearchResponseDto response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("apikey", apiKey)
+                        .queryParam("s", title)
+                        .build())
+                .retrieve()
+                .body(OmdbSearchResponseDto.class);
+
+        if (response == null) {
+            throw new RuntimeException("Keine Antwort von OMDb");
+        }
+
+        if (!"True".equalsIgnoreCase(response.getResponse())) {
+            throw new RuntimeException("OMDb Fehler: ");
+        }
+
+        return response;
+    }
 }

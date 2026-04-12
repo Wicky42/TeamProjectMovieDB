@@ -1,8 +1,8 @@
 package org.example.backend.service;
 
 import org.example.backend.client.OmdbClient;
-import org.example.backend.domain.Movie;
-import org.example.backend.dto.OmdbResponseDto;
+import org.example.backend.domain.MovieDetails;
+import org.example.backend.dto.OmdbMovieDetailsDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class MovieServiceTest {
+class MovieDetailsServiceTest {
 
     @Mock
     private OmdbClient omdbClient;
@@ -23,7 +23,7 @@ class MovieServiceTest {
 
     @Test
     void shouldReturnMappedMovieWhenOmdbResponseIsSuccessful() {
-        OmdbResponseDto dto = new OmdbResponseDto();
+        OmdbMovieDetailsDto dto = new OmdbMovieDetailsDto();
         dto.setTitle("Inception");
         dto.setPoster("https://poster.url");
         dto.setYear(2010);
@@ -36,7 +36,7 @@ class MovieServiceTest {
 
         when(omdbClient.findByTitle("Inception")).thenReturn(dto);
 
-        Movie result = movieService.getMovie("Inception");
+        MovieDetails result = movieService.retrieveMovieDetailsByTitle("Inception");
 
         assertNotNull(result);
         assertEquals("Inception", result.title());
@@ -56,7 +56,7 @@ class MovieServiceTest {
         when(omdbClient.findByTitle("Unknown")).thenReturn(null);
 
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> movieService.getMovie("Unknown"));
+                () -> movieService.retrieveMovieDetailsByTitle("Unknown"));
 
         assertEquals("Film nicht gefunden", exception.getMessage());
         verify(omdbClient).findByTitle("Unknown");
@@ -64,13 +64,13 @@ class MovieServiceTest {
 
     @Test
     void shouldThrowExceptionWhenResponseIsFalse() {
-        OmdbResponseDto dto = new OmdbResponseDto();
+        OmdbMovieDetailsDto dto = new OmdbMovieDetailsDto();
         dto.setResponse("False");
 
         when(omdbClient.findByTitle("Unknown")).thenReturn(dto);
 
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> movieService.getMovie("Unknown"));
+                () -> movieService.retrieveMovieDetailsByTitle("Unknown"));
 
         assertEquals("Film nicht gefunden", exception.getMessage());
         verify(omdbClient).findByTitle("Unknown");

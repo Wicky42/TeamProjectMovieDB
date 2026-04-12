@@ -1,6 +1,6 @@
 package org.example.backend.controller;
 
-import org.example.backend.domain.Movie;
+import org.example.backend.domain.MovieDetails;
 import org.example.backend.service.MovieService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 // Nur den Controller testen
 @org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(MovieController.class)
-class MovieControllerTest {
+class MovieDetailsControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -23,7 +23,7 @@ class MovieControllerTest {
 
     @Test
     void shouldReturnMovieByTitle() throws Exception {
-        Movie movie = new Movie(
+        MovieDetails movieDetails = new MovieDetails(
                 "Some title",
                 "some-poster-path.jpg",
                 2026,
@@ -33,7 +33,7 @@ class MovieControllerTest {
                 "81",
                 "8.3");
 
-        when(movieService.getMovie("Some title")).thenReturn(movie);
+        when(movieService.retrieveMovieDetailsByTitle("Some title")).thenReturn(movieDetails);
 
         mockMvc.perform(get("/api/movies")
                         .param("title", "Some title"))

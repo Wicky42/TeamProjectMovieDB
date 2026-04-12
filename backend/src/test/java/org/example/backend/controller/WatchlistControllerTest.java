@@ -2,7 +2,7 @@ package org.example.backend.controller;
 
 import java.util.List;
 
-import org.example.backend.domain.Movie;
+import org.example.backend.domain.MovieDetails;
 import org.example.backend.domain.Watchlist;
 import org.example.backend.repo.WatchlistRepo;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ public class WatchlistControllerTest {
     return new Watchlist(
       "1",
       "Some name",
-      List.of(new Movie(
+      List.of(new MovieDetails(
         "Some title",
         "some-poster-path.jpg",
         2026,

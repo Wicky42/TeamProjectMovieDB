@@ -2,10 +2,14 @@ package org.example.backend.service;
 
 import org.example.backend.client.OmdbClient;
 import org.example.backend.domain.Movie;
-import org.example.backend.dto.OmdbResponseDto;
-import org.springframework.beans.factory.annotation.Value;
+import org.example.backend.domain.MovieDetails;
+import org.example.backend.dto.OmdbMovieDetailsDto;
+import org.example.backend.dto.OmdbMovieDto;
+import org.example.backend.dto.OmdbSearchResponseDto;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MovieService {
@@ -16,20 +20,25 @@ public class MovieService {
         this.omdbClient = omdbClient;
     }
 
-    public Movie getMovie(String title) {
-        OmdbResponseDto response = omdbClient.findByTitle(title);
+    public MovieDetails retrieveMovieDetailsByTitle(String title) {
+        OmdbMovieDetailsDto response = omdbClient.findByTitle(title);
 
         if (response == null || !"True".equalsIgnoreCase(response.getResponse())) {
             throw new RuntimeException("Film nicht gefunden");
         }
 
-        return mapToMovie(response);
+        return mapToMovieDetails(response);
+    }
 
+    public List<Movie> retrieveMovies(String title){
+        OmdbSearchResponseDto omdbSearchResponseDto = omdbClient.findMovies(title);
+
+        return mapToMovie(omdbSearchResponseDto);
     }
 
     //*--------- HELP MAP TO MOVIE ------*//
-    private Movie mapToMovie(OmdbResponseDto dto){
-        return new Movie(
+    private MovieDetails mapToMovieDetails(OmdbMovieDetailsDto dto){
+        return new MovieDetails(
                 dto.getTitle(),
                 dto.getPoster(),
                 dto.getYear(),
@@ -39,5 +48,20 @@ public class MovieService {
                 dto.getMetascore(),
                 dto.getImdbRating()
         );
+    }
+
+    private List<Movie> mapToMovie(OmdbSearchResponseDto searchDto){
+        List<Movie> movies = new ArrayList<>();
+        for( OmdbMovieDto dto : searchDto.getSearch() ){
+            Movie toAdd = new Movie(
+                    dto.getTitle(),
+                    dto.getYear(),
+                    dto.getImdbID(),
+                    dto.getType(),
+                    dto.getPoster()
+            );
+            movies.add(toAdd);
+        }
+        return movies;
     }
 }
