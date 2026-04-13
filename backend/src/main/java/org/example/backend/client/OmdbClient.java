@@ -9,13 +9,16 @@ import org.springframework.web.client.RestClient;
 @Component
 public class OmdbClient {
 
+    private static final String BASE_URL = "http://www.omdbapi.com";
+    private static final String OMDB_RESPONSE_SUCCESS = "True";
+
     private final RestClient restClient;
     private final String apiKey;
 
-    public OmdbClient( @Value("${omdb.api}") String apiKey) {
+    public OmdbClient(@Value("${omdb.api}") String apiKey) {
         this.apiKey = apiKey;
         this.restClient = RestClient.builder()
-                .baseUrl("http://www.omdbapi.com")
+                .baseUrl(BASE_URL)
                 .build();
     }
 
@@ -28,14 +31,7 @@ public class OmdbClient {
                 .retrieve()
                 .body(OmdbMovieDetailsDto.class);
 
-        if (response == null) {
-            throw new RuntimeException("Keine Antwort von OMDb");
-        }
-
-        if (!"True".equalsIgnoreCase(response.getResponse())) {
-            throw new RuntimeException("OMDb Fehler: " + response.getError());
-        }
-
+        validateMovieDetailsResponse(response);
         return response;
     }
 
@@ -48,17 +44,9 @@ public class OmdbClient {
                 .retrieve()
                 .body(OmdbMovieDetailsDto.class);
 
-        if (response == null) {
-            throw new RuntimeException("Keine Antwort von OMDb");
-        }
-
-        if (!"True".equalsIgnoreCase(response.getResponse())) {
-            throw new RuntimeException("OMDb Fehler: " + response.getError());
-        }
-
+        validateMovieDetailsResponse(response);
         return response;
     }
-
 
     public OmdbSearchResponseDto findMovies(String title) {
         OmdbSearchResponseDto response = restClient.get()
@@ -69,14 +57,25 @@ public class OmdbClient {
                 .retrieve()
                 .body(OmdbSearchResponseDto.class);
 
-        if (response == null) {
-            throw new RuntimeException("Keine Antwort von OMDb");
-        }
-
-        if (!"True".equalsIgnoreCase(response.getResponse())) {
-            throw new RuntimeException("OMDb Fehler: ");
-        }
-
+        validateSearchResponse(response);
         return response;
+    }
+
+    private void validateMovieDetailsResponse(OmdbMovieDetailsDto response) {
+        if (response == null) {
+            throw new OmdbClientException("Keine Antwort von OMDb");
+        }
+        if (!OMDB_RESPONSE_SUCCESS.equalsIgnoreCase(response.getResponse())) {
+            throw new OmdbClientException("OMDb Fehler: " + response.getError());
+        }
+    }
+
+    private void validateSearchResponse(OmdbSearchResponseDto response) {
+        if (response == null) {
+            throw new OmdbClientException("Keine Antwort von OMDb");
+        }
+        if (!OMDB_RESPONSE_SUCCESS.equalsIgnoreCase(response.getResponse())) {
+            throw new OmdbClientException("OMDb Fehler: Keine Suchergebnisse gefunden");
+        }
     }
 }

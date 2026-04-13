@@ -3,11 +3,10 @@ package org.example.backend.service;
 import org.example.backend.client.OmdbClient;
 import org.example.backend.domain.MovieDetails;
 import org.example.backend.dto.OmdbMovieDetailsDto;
-import org.example.backend.dto.OmdbMovieDto;
 import org.example.backend.dto.OmdbSearchResponseDto;
+import org.example.backend.exception.MovieNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,7 +14,7 @@ public class MovieService {
 
     private final OmdbClient omdbClient;
 
-    public MovieService( OmdbClient omdbClient) {
+    public MovieService(OmdbClient omdbClient) {
         this.omdbClient = omdbClient;
     }
 
@@ -23,19 +22,22 @@ public class MovieService {
         OmdbMovieDetailsDto response = omdbClient.findByTitle(title);
 
         if (response == null || !"True".equalsIgnoreCase(response.getResponse())) {
-            throw new RuntimeException("Film nicht gefunden");
+            throw new MovieNotFoundException(title);
         }
-        return mapToMovieDetails(response);
+
+        return toMovieDetails(response);
     }
 
-    public List<MovieDetails> retrieveMovies(String title){
-        OmdbSearchResponseDto omdbSearchResponseDto = omdbClient.findMovies(title);
+    public List<MovieDetails> retrieveMovies(String title) {
+        OmdbSearchResponseDto searchResponse = omdbClient.findMovies(title);
 
-        return mapToMovieDetails(omdbSearchResponseDto);
+        return searchResponse.getSearch().stream()
+                .map(movie -> omdbClient.findByImdbId(movie.getImdbID()))
+                .map(this::toMovieDetails)
+                .toList();
     }
 
-    //*--------- HELP MAP TO MOVIE ------*//
-    private MovieDetails mapToMovieDetails(OmdbMovieDetailsDto dto){
+    private MovieDetails toMovieDetails(OmdbMovieDetailsDto dto) {
         return new MovieDetails(
                 dto.getTitle(),
                 dto.getPoster(),
@@ -47,16 +49,5 @@ public class MovieService {
                 dto.getImdbRating(),
                 dto.getPlot()
         );
-    }
-
-
-    private List<MovieDetails> mapToMovieDetails(OmdbSearchResponseDto searchResponseDto){
-        List<MovieDetails> movieDetailsList = new ArrayList<>();
-        for(OmdbMovieDto movieDto : searchResponseDto.getSearch()){
-            OmdbMovieDetailsDto movieDetailDto = omdbClient.findByImdbId(movieDto.getImdbID());
-            MovieDetails movieToAdd = mapToMovieDetails(movieDetailDto);
-            movieDetailsList.add(movieToAdd);
-        }
-        return movieDetailsList;
     }
 }
