@@ -1,29 +1,29 @@
 package org.example.backend.controller;
 
-import jakarta.annotation.Nonnull;
 import org.example.backend.domain.MovieDetails;
 import org.example.backend.service.MovieService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/movies")
-public class MovieController {
+class MovieController {
+
     private final MovieService movieService;
 
-    public MovieController(MovieService movieService) {
+    MovieController(MovieService movieService) {
         this.movieService = movieService;
     }
 
     @GetMapping("/{title}")
-    public MovieDetails getMovieByTitle(@PathVariable String title){
-        return movieService.retrieveMovieDetailsByTitle(title);
+    public ResponseEntity<MovieDetails> getMovieByTitle(@PathVariable String title) {
+        return ResponseEntity.ok(movieService.retrieveMovieDetailsByTitle(title));
     }
 
     @GetMapping
-    public List<MovieDetails> getMoviesByTitle(@RequestParam @Nonnull String title){
-        return movieService.retrieveMovies(title);
+    public ResponseEntity<List<MovieDetails>> getMoviesByTitle(@RequestParam String title) {
+        return ResponseEntity.ok(movieService.retrieveMovies(title));
     }
 }
