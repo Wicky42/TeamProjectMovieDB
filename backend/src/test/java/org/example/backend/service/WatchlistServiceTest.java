@@ -35,7 +35,7 @@ class WatchlistServiceTest {
         "Action",
         "81",
         "8.3",
-              "Plot"
+        "Plot"
       )),
       "Some description"
     );
