@@ -40,7 +40,4 @@ public class OmdbMovieDetailsDto {
 
     private String imdbRating;
 
-    public boolean isSuccess() {
-        return "True".equalsIgnoreCase(response);
-    }
 }
