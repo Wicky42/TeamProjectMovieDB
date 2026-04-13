@@ -2,7 +2,7 @@ package org.example.backend.controller;
 
 import java.util.List;
 
-import org.example.backend.domain.Movie;
+import org.example.backend.domain.MovieDetails;
 import org.example.backend.domain.Watchlist;
 import org.example.backend.repo.WatchlistRepo;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@SpringBootTest
+@SpringBootTest(properties = "omdb.api=test-key")
 public class WatchlistControllerTest {
   @Autowired private MockMvc mockMvc;
   @Autowired private ObjectMapper objectMapper;
@@ -29,7 +29,7 @@ public class WatchlistControllerTest {
     return new Watchlist(
       "1",
       "Some name",
-      List.of(new Movie(
+      List.of(new MovieDetails(
         "Some title",
         "some-poster-path.jpg",
         2026,
@@ -37,7 +37,8 @@ public class WatchlistControllerTest {
         "Some imdbID",
         "Action",
         "81",
-        "8.3"
+        "8.3",
+        "Plot"
       )),
       "Some description"
     );
