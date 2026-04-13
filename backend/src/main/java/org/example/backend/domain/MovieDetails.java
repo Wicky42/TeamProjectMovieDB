@@ -8,6 +8,7 @@ public record MovieDetails(
         String imdbID,
         String genre,
         String metascore,
-        String imdbRating
+        String imdbRating,
+        String plot
 ) {
 }

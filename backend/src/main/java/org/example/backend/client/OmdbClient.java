@@ -39,6 +39,26 @@ public class OmdbClient {
         return response;
     }
 
+    public OmdbMovieDetailsDto findByImdbId(String imdbId) {
+        OmdbMovieDetailsDto response = restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("apikey", apiKey)
+                        .queryParam("i", imdbId)
+                        .build())
+                .retrieve()
+                .body(OmdbMovieDetailsDto.class);
+
+        if (response == null) {
+            throw new RuntimeException("Keine Antwort von OMDb");
+        }
+
+        if (!"True".equalsIgnoreCase(response.getResponse())) {
+            throw new RuntimeException("OMDb Fehler: " + response.getError());
+        }
+
+        return response;
+    }
+
 
     public OmdbSearchResponseDto findMovies(String title) {
         OmdbSearchResponseDto response = restClient.get()

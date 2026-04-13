@@ -1,7 +1,6 @@
 package org.example.backend.controller;
 
 import jakarta.annotation.Nonnull;
-import org.example.backend.domain.Movie;
 import org.example.backend.domain.MovieDetails;
 import org.example.backend.service.MovieService;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +17,13 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @GetMapping("{title}")
+    @GetMapping("/{title}")
     public MovieDetails getMovieByTitle(@PathVariable String title){
         return movieService.retrieveMovieDetailsByTitle(title);
     }
 
     @GetMapping
-    public List<Movie> getMoviesByTitle(@RequestParam @Nonnull String title){
+    public List<MovieDetails> getMoviesByTitle(@RequestParam @Nonnull String title){
         return movieService.retrieveMovies(title);
     }
 }

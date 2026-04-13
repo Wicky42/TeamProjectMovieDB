@@ -37,7 +37,8 @@ public class WatchlistControllerTest {
         "Some imdbID",
         "Action",
         "81",
-        "8.3"
+        "8.3",
+              "Plot"
       )),
       "Some description"
     );

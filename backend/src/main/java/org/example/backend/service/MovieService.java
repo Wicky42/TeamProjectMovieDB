@@ -1,7 +1,6 @@
 package org.example.backend.service;
 
 import org.example.backend.client.OmdbClient;
-import org.example.backend.domain.Movie;
 import org.example.backend.domain.MovieDetails;
 import org.example.backend.dto.OmdbMovieDetailsDto;
 import org.example.backend.dto.OmdbMovieDto;
@@ -26,14 +25,13 @@ public class MovieService {
         if (response == null || !"True".equalsIgnoreCase(response.getResponse())) {
             throw new RuntimeException("Film nicht gefunden");
         }
-
         return mapToMovieDetails(response);
     }
 
-    public List<Movie> retrieveMovies(String title){
+    public List<MovieDetails> retrieveMovies(String title){
         OmdbSearchResponseDto omdbSearchResponseDto = omdbClient.findMovies(title);
 
-        return mapToMovie(omdbSearchResponseDto);
+        return mapToMovieDetails(omdbSearchResponseDto);
     }
 
     //*--------- HELP MAP TO MOVIE ------*//
@@ -46,22 +44,19 @@ public class MovieService {
                 dto.getImdbID(),
                 dto.getGenre(),
                 dto.getMetascore(),
-                dto.getImdbRating()
+                dto.getImdbRating(),
+                dto.getPlot()
         );
     }
 
-    private List<Movie> mapToMovie(OmdbSearchResponseDto searchDto){
-        List<Movie> movies = new ArrayList<>();
-        for( OmdbMovieDto dto : searchDto.getSearch() ){
-            Movie toAdd = new Movie(
-                    dto.getTitle(),
-                    dto.getYear(),
-                    dto.getImdbID(),
-                    dto.getType(),
-                    dto.getPoster()
-            );
-            movies.add(toAdd);
+
+    private List<MovieDetails> mapToMovieDetails(OmdbSearchResponseDto searchResponseDto){
+        List<MovieDetails> movieDetailsList = new ArrayList<>();
+        for(OmdbMovieDto movieDto : searchResponseDto.getSearch()){
+            OmdbMovieDetailsDto movieDetailDto = omdbClient.findByImdbId(movieDto.getImdbID());
+            MovieDetails movieToAdd = mapToMovieDetails(movieDetailDto);
+            movieDetailsList.add(movieToAdd);
         }
-        return movies;
+        return movieDetailsList;
     }
 }
