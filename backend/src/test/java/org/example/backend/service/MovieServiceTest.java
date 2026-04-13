@@ -5,9 +5,9 @@ import org.example.backend.domain.MovieDetails;
 import org.example.backend.dto.OmdbMovieDetailsDto;
 import org.example.backend.dto.OmdbMovieDto;
 import org.example.backend.dto.OmdbSearchResponseDto;
+import org.example.backend.exception.MovieNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,7 +29,6 @@ class MovieServiceTest {
     private static final String VALID_TITLE = "Inception";
     private static final String VALID_IMDB_ID = "tt1375666";
 
-    // 🔹 Helper DTO (simuliert API Response)
     private OmdbMovieDetailsDto createValidDetailsDto() {
         OmdbMovieDetailsDto dto = new OmdbMovieDetailsDto();
         dto.setTitle("Inception");
@@ -45,13 +44,10 @@ class MovieServiceTest {
         return dto;
     }
 
-    // 🔹 Test: Einzelner Film
     @Test
     void retrieveMovieDetailsByTitle_shouldReturnMovieDetails() {
         OmdbMovieDetailsDto dto = createValidDetailsDto();
-
-        when(omdbClient.findByTitle(VALID_TITLE))
-                .thenReturn(dto);
+        when(omdbClient.findByTitle(VALID_TITLE)).thenReturn(dto);
 
         MovieDetails result = movieService.retrieveMovieDetailsByTitle(VALID_TITLE);
 
@@ -66,27 +62,18 @@ class MovieServiceTest {
         assertEquals("Dreams...", result.plot());
     }
 
-    // 🔹 Test: Film nicht gefunden
     @Test
-    void retrieveMovieDetailsByTitle_shouldThrowException_whenNotFound() {
+    void retrieveMovieDetailsByTitle_shouldThrowMovieNotFoundException_whenNotFound() {
         OmdbMovieDetailsDto dto = new OmdbMovieDetailsDto();
         dto.setResponse("False");
+        when(omdbClient.findByTitle(VALID_TITLE)).thenReturn(dto);
 
-        when(omdbClient.findByTitle(VALID_TITLE))
-                .thenReturn(dto);
-
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> movieService.retrieveMovieDetailsByTitle(VALID_TITLE)
-        );
-
-        assertEquals("Film nicht gefunden", exception.getMessage());
+        assertThrows(MovieNotFoundException.class,
+                () -> movieService.retrieveMovieDetailsByTitle(VALID_TITLE));
     }
 
-    // 🔹 Test: Liste von Filmen
     @Test
     void retrieveMovies_shouldReturnMovieDetailsList() {
-        // Step 1: Search Response
         OmdbMovieDto movieDto = new OmdbMovieDto();
         movieDto.setTitle("Inception");
         movieDto.setImdbID(VALID_IMDB_ID);
@@ -94,14 +81,10 @@ class MovieServiceTest {
         OmdbSearchResponseDto searchResponse = new OmdbSearchResponseDto();
         searchResponse.setSearch(List.of(movieDto));
 
-        // Step 2: Detail Response
         OmdbMovieDetailsDto detailsDto = createValidDetailsDto();
 
-        when(omdbClient.findMovies(VALID_TITLE))
-                .thenReturn(searchResponse);
-
-        when(omdbClient.findByImdbId(VALID_IMDB_ID))
-                .thenReturn(detailsDto);
+        when(omdbClient.findMovies(VALID_TITLE)).thenReturn(searchResponse);
+        when(omdbClient.findByImdbId(VALID_IMDB_ID)).thenReturn(detailsDto);
 
         List<MovieDetails> result = movieService.retrieveMovies(VALID_TITLE);
 
