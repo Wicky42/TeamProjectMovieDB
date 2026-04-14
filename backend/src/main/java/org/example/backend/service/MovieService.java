@@ -50,4 +50,16 @@ public class MovieService {
                 dto.getPlot()
         );
     }
+
+    public MovieDetails getMovieFromAiSuggestion(String prompt) {
+        //TODO
+        // ask openAi for iddbID for a movie that matches the prompt
+
+        //validate OpenAiResponse
+
+        //if validation is ok ( response contains idbID , then getmovieByImdbID from omdbClient
+
+        //else throw exception ( MovieNotFound , OpenAiException )
+
+    }
 }

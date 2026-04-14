@@ -26,4 +26,9 @@ class MovieController {
     public ResponseEntity<List<MovieDetails>> getMoviesByTitle(@RequestParam String title) {
         return ResponseEntity.ok(movieService.retrieveMovies(title));
     }
+
+    @GetMapping("/suggestion")
+    public ResponseEntity<MovieDetails> getMovieByAiSuggestion(@RequestParam String prompt){
+        return ResponseEntity.ok(movieService.getMovieFromAiSuggestion(prompt));
+    }
 }
