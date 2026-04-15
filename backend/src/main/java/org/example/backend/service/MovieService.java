@@ -3,7 +3,7 @@ package org.example.backend.service;
 import org.example.backend.client.OmdbClient;
 import org.example.backend.client.OpenAIResponseException;
 import org.example.backend.client.OpenAiClient;
-import org.example.backend.domain.MovieDetails;
+import org.example.backend.dto.MovieResponseDto;
 import org.example.backend.dto.OmdbMovieDetailsDto;
 import org.example.backend.dto.OmdbSearchResponseDto;
 import org.example.backend.exception.MovieNotFoundException;
@@ -22,7 +22,7 @@ public class MovieService {
         this.openAiClient = openAiClient;
     }
 
-    public MovieDetails retrieveMovieDetailsByTitle(String title) {
+    public MovieResponseDto retrieveMovieDetailsByTitle(String title) {
         OmdbMovieDetailsDto response = omdbClient.findByTitle(title);
 
         if (response == null || !"True".equalsIgnoreCase(response.getResponse())) {
@@ -32,7 +32,7 @@ public class MovieService {
         return toMovieDetails(response);
     }
 
-    public List<MovieDetails> retrieveMovies(String title) {
+    public List<MovieResponseDto> retrieveMovies(String title) {
         OmdbSearchResponseDto searchResponse = omdbClient.findMovies(title);
 
         return searchResponse.getSearch().stream()
@@ -41,7 +41,7 @@ public class MovieService {
                 .toList();
     }
 
-    public MovieDetails getMovieFromAiSuggestion(String prompt) {
+    public MovieResponseDto getMovieFromAiSuggestion(String prompt) {
         String openAiResponse = openAiClient.findMovieImdbID_whenCalledWithPrompt(prompt).text();
 
         if( !validateAiResponse(openAiResponse)) {
@@ -52,8 +52,8 @@ public class MovieService {
 
     //* --------------- HELPER -------------*//
 
-    private MovieDetails toMovieDetails(OmdbMovieDetailsDto dto) {
-        return new MovieDetails(
+    private MovieResponseDto toMovieDetails(OmdbMovieDetailsDto dto) {
+        return new MovieResponseDto(
                 dto.getTitle(),
                 dto.getPoster(),
                 dto.getYear(),

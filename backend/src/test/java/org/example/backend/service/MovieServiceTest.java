@@ -3,7 +3,6 @@ package org.example.backend.service;
 import org.example.backend.client.OmdbClient;
 import org.example.backend.client.OpenAIResponseException;
 import org.example.backend.client.OpenAiClient;
-import org.example.backend.domain.MovieDetails;
 import org.example.backend.dto.*;
 import org.example.backend.exception.MovieNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -52,7 +51,7 @@ class MovieServiceTest {
         OmdbMovieDetailsDto dto = createValidDetailsDto();
         when(omdbClient.findByTitle(VALID_TITLE)).thenReturn(dto);
 
-        MovieDetails result = movieService.retrieveMovieDetailsByTitle(VALID_TITLE);
+        MovieResponseDto result = movieService.retrieveMovieDetailsByTitle(VALID_TITLE);
 
         assertEquals("Inception", result.title());
         assertEquals("poster.jpg", result.poster());
@@ -89,7 +88,7 @@ class MovieServiceTest {
         when(omdbClient.findMovies(VALID_TITLE)).thenReturn(searchResponse);
         when(omdbClient.findByImdbId(VALID_IMDB_ID)).thenReturn(detailsDto);
 
-        List<MovieDetails> result = movieService.retrieveMovies(VALID_TITLE);
+        List<MovieResponseDto> result = movieService.retrieveMovies(VALID_TITLE);
 
         assertEquals(1, result.size());
         assertEquals("Inception", result.getFirst().title());
@@ -105,7 +104,7 @@ class MovieServiceTest {
         when(omdbClient.findByImdbId("tt1375666"))
                 .thenReturn(detailsDto);
 
-        MovieDetails result = movieService.getMovieFromAiSuggestion(prompt);
+        MovieResponseDto result = movieService.getMovieFromAiSuggestion(prompt);
 
         assertEquals("Inception", result.title());
         assertEquals("tt1375666", result.imdbID());
