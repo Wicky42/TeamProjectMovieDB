@@ -3,6 +3,7 @@ import './styles/index.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import MovieSearch from './components/MovieSearch';
+import MovieAiRecommendation from './components/MovieAiRecommendation';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Header />
       <main className="app-shell__content">
         <MovieSearch />
+        <MovieAiRecommendation />
       </main>
       <Footer />
     </div>
