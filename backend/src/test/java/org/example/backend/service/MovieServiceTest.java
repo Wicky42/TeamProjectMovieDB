@@ -36,7 +36,7 @@ class MovieServiceTest {
         OmdbMovieDetailsDto dto = new OmdbMovieDetailsDto();
         dto.setTitle("Inception");
         dto.setPoster("poster.jpg");
-        dto.setYear(2010);
+        dto.setYear("2010");
         dto.setType("movie");
         dto.setImdbID(VALID_IMDB_ID);
         dto.setGenre("Sci-Fi");
@@ -56,7 +56,7 @@ class MovieServiceTest {
 
         assertEquals("Inception", result.title());
         assertEquals("poster.jpg", result.poster());
-        assertEquals(2010, result.year());
+        assertEquals("2010", result.year());
         assertEquals("movie", result.type());
         assertEquals(VALID_IMDB_ID, result.imdbID());
         assertEquals("Sci-Fi", result.genre());

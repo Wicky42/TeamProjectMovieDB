@@ -31,7 +31,7 @@ class MovieControllerTest {
     private static final MovieDetails VALID_DATA = new MovieDetails(
             "Inception",
             "https://image.url/inception.jpg",
-            2010,
+            "2010",
             "movie",
             "tt1375666",
             "Sci-Fi",
@@ -45,7 +45,7 @@ class MovieControllerTest {
             new MovieDetails(
                     "Interstellar",
                     "https://image.url/interstellar.jpg",
-                    2014,
+                    "2014",
                     "movie",
                     "tt0816692",
                     "Sci-Fi",

@@ -9,7 +9,7 @@ public class OmdbMovieDto {
     private String title;
 
     @JsonProperty("Year")
-    private int year;
+    private String year;
 
     @JsonProperty("Type")
     private String type;

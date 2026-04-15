@@ -34,20 +34,20 @@ class WatchlistControllerTest {
 
   private Watchlist validWatchlist() {
     return new Watchlist(
-            "1",
-            "Some name",
-            List.of(new MovieDetails(
-                    "Some title",
-                    "some-poster-path.jpg",
-                    2026,
-                    "Some type",
-                    "Some imdbID",
-                    "Action",
-                    "81",
-                    "8.3",
-                    "Plot"
-            )),
-            "Some description"
+      "1",
+      "Some name",
+      List.of(new MovieDetails(
+        "Some title",
+        "some-poster-path.jpg",
+        "2026",
+        "Some type",
+        "Some imdbID",
+        "Action",
+        "81",
+        "8.3",
+        "Plot"
+      )),
+      "Some description"
     );
   }
 

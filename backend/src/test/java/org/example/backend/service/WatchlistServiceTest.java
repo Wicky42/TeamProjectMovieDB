@@ -29,7 +29,7 @@ class WatchlistServiceTest {
       List.of(new MovieDetails(
         "Some title",
         "some-poster-path.jpg",
-        2026,
+        "2026",
         "Some type",
         "Some imdbID",
         "Action",
