@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
-import org.example.backend.domain.Movie;
+import org.example.backend.domain.MovieDetails;
 import org.example.backend.domain.Watchlist;
 import org.example.backend.repo.WatchlistRepo;
 import org.junit.jupiter.api.Test;
@@ -26,15 +26,16 @@ class WatchlistServiceTest {
     return new Watchlist(
       "1",
       "Some name",
-      List.of(new Movie(
+      List.of(new MovieDetails(
         "Some title",
         "some-poster-path.jpg",
-        2026,
+        "2026",
         "Some type",
         "Some imdbID",
         "Action",
         "81",
-        "8.3"
+        "8.3",
+        "Plot"
       )),
       "Some description"
     );
