@@ -1,10 +1,10 @@
 package org.example.backend.service;
 
 import org.example.backend.client.OmdbClient;
+import org.example.backend.client.OpenAIResponseException;
+import org.example.backend.client.OpenAiClient;
 import org.example.backend.domain.MovieDetails;
-import org.example.backend.dto.OmdbMovieDetailsDto;
-import org.example.backend.dto.OmdbMovieDto;
-import org.example.backend.dto.OmdbSearchResponseDto;
+import org.example.backend.dto.*;
 import org.example.backend.exception.MovieNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,13 +15,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MovieServiceTest {
 
     @Mock
     private OmdbClient omdbClient;
+
+    @Mock
+    private OpenAiClient openAiClient;
 
     @InjectMocks
     private MovieService movieService;
@@ -91,4 +94,67 @@ class MovieServiceTest {
         assertEquals(1, result.size());
         assertEquals("Inception", result.getFirst().title());
     }
+
+    @Test
+    void getMovieFromAiSuggestion_shouldReturnMovieDetails_whenAiReturnsValidImdbId() {
+        String prompt = "Ich möchte einen Film über Träume";
+        OmdbMovieDetailsDto detailsDto = createValidDetailsDto();
+
+        when(openAiClient.findMovieImdbID_whenCalledWithPrompt(prompt))
+                .thenReturn(createOpenAiResponse("tt1375666"));
+        when(omdbClient.findByImdbId("tt1375666"))
+                .thenReturn(detailsDto);
+
+        MovieDetails result = movieService.getMovieFromAiSuggestion(prompt);
+
+        assertEquals("Inception", result.title());
+        assertEquals("tt1375666", result.imdbID());
+        assertEquals("Sci-Fi", result.genre());
+
+        verify(openAiClient).findMovieImdbID_whenCalledWithPrompt(prompt);
+        verify(omdbClient).findByImdbId("tt1375666");
+    }
+
+    @Test
+    void getMovieFromAiSuggestion_shouldThrowOpenAIResponseException_whenAiReturnsInvalidText() {
+        String prompt = "Ich möchte einen Film über Träume";
+
+        when(openAiClient.findMovieImdbID_whenCalledWithPrompt(prompt))
+                .thenReturn(createOpenAiResponse("Inception"));
+
+        OpenAIResponseException exception = assertThrows(
+                OpenAIResponseException.class,
+                () -> movieService.getMovieFromAiSuggestion(prompt)
+        );
+
+        assertEquals("Kein Film zum Prompt gefunden", exception.getMessage());
+        verify(omdbClient, never()).findByImdbId(anyString());
+    }
+
+    @Test
+    void getMovieFromAiSuggestion_shouldThrowOpenAIResponseException_whenAiReturnsNull() {
+        String prompt = "Ich möchte einen Film über Träume";
+
+        when(openAiClient.findMovieImdbID_whenCalledWithPrompt(prompt))
+                .thenReturn(createOpenAiResponse(null));
+
+        OpenAIResponseException exception = assertThrows(
+                OpenAIResponseException.class,
+                () -> movieService.getMovieFromAiSuggestion(prompt)
+        );
+
+        assertEquals("Kein Film zum Prompt gefunden", exception.getMessage());
+        verify(omdbClient, never()).findByImdbId(anyString());
+    }
+
+    private OpenAIResponse createOpenAiResponse(String content) {
+        return new OpenAIResponse(
+                "gpt-5.4",
+                List.of(new OpenAIChoice(
+                        0,
+                        new OpenAIMessage("assistant", content)
+                ))
+        );
+    }
+
 }

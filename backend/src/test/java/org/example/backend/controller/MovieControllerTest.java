@@ -11,7 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.TEXT_PLAIN;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -92,4 +94,24 @@ class MovieControllerTest {
         mockMvc.perform(get("/api/movies"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void getMovieByAiSuggestion_shouldReturnMovieDetails() throws Exception {
+        String prompt = "Ich möchte einen Sci-Fi Film mit Träumen";
+
+        when(movieService.getMovieFromAiSuggestion(prompt))
+                .thenReturn(VALID_DATA);
+
+        mockMvc.perform(post("/api/movies/suggestion")
+                        .contentType(TEXT_PLAIN)
+                        .content(prompt))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.title").value("Inception"))
+                .andExpect(jsonPath("$.imdbID").value("tt1375666"))
+                .andExpect(jsonPath("$.genre").value("Sci-Fi"));
+    }
+
 }
+
+

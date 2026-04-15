@@ -1,6 +1,7 @@
 package org.example.backend.service;
 
 import org.example.backend.client.OmdbClient;
+import org.example.backend.client.OpenAIResponseException;
 import org.example.backend.client.OpenAiClient;
 import org.example.backend.domain.MovieDetails;
 import org.example.backend.dto.OmdbMovieDetailsDto;
@@ -40,6 +41,17 @@ public class MovieService {
                 .toList();
     }
 
+    public MovieDetails getMovieFromAiSuggestion(String prompt) {
+        String openAiResponse = openAiClient.findMovieImdbID_whenCalledWithPrompt(prompt).text();
+
+        if( !validateAiResponse(openAiResponse)) {
+            throw new OpenAIResponseException("Kein Film zum Prompt gefunden");
+        }
+        return toMovieDetails(omdbClient.findByImdbId(openAiResponse));
+    }
+
+    //* --------------- HELPER -------------*//
+
     private MovieDetails toMovieDetails(OmdbMovieDetailsDto dto) {
         return new MovieDetails(
                 dto.getTitle(),
@@ -54,20 +66,10 @@ public class MovieService {
         );
     }
 
-    public MovieDetails getMovieFromAiSuggestion(String prompt) {
-        //TODO
-        // ask openAi for iddbID for a movie that matches the prompt
-        String openAiResponse = openAiClient.findMovieImdbID_whenCalledWithPrompt(prompt).text();
-
-        //validate OpenAiResponse
-
-        //if validation is ok ( response contains idbID , then getmovieByImdbID from omdbClient
-        return toMovieDetails(omdbClient.findByImdbId(openAiResponse));
-        //else throw exception ( MovieNotFound , OpenAiException )
-
+    private static boolean validateAiResponse(String openAiResponse) {
+        if (openAiResponse == null) {
+            return false;
+        }
+        return openAiResponse.matches("tt\\d+");
     }
-
-//    private boolean isOpenAiResponseAnImdbID(String openAiResponse){
-//        if
-//    }
 }
