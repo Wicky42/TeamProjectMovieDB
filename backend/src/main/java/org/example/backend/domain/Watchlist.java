@@ -11,7 +11,7 @@ public record Watchlist(
         @Id
         String id,
         String name,
-        List<MovieDetails> movieDetails,
+        List<String> watchlistEntryIds,
         String description
 ) {
 }
