@@ -3,7 +3,6 @@ package org.example.backend.service;
 import org.example.backend.client.OmdbClient;
 import org.example.backend.client.OpenAIResponseException;
 import org.example.backend.client.OpenAiClient;
-import org.example.backend.domain.MovieDetails;
 import org.example.backend.dto.*;
 import org.example.backend.exception.MovieNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +52,7 @@ class MovieServiceTest {
         OmdbMovieDetailsDto dto = createValidDetailsDto();
         when(omdbClient.findByTitle(VALID_TITLE)).thenReturn(dto);
 
-        MovieDetails result = movieService.retrieveMovieDetailsByTitle(VALID_TITLE);
+        MovieResponseDto result = movieService.retrieveMovieDetailsByTitle(VALID_TITLE);
 
         assertEquals("Inception", result.title());
         assertEquals("poster.jpg", result.poster());
@@ -89,7 +89,7 @@ class MovieServiceTest {
         when(omdbClient.findMovies(VALID_TITLE)).thenReturn(searchResponse);
         when(omdbClient.findByImdbId(VALID_IMDB_ID)).thenReturn(detailsDto);
 
-        List<MovieDetails> result = movieService.retrieveMovies(VALID_TITLE);
+        List<MovieResponseDto> result = movieService.retrieveMovies(VALID_TITLE);
 
         assertEquals(1, result.size());
         assertEquals("Inception", result.getFirst().title());
@@ -105,7 +105,7 @@ class MovieServiceTest {
         when(omdbClient.findByImdbId("tt1375666"))
                 .thenReturn(detailsDto);
 
-        MovieDetails result = movieService.getMovieFromAiSuggestion(prompt);
+        MovieResponseDto result = movieService.getMovieFromAiSuggestion(prompt);
 
         assertEquals("Inception", result.title());
         assertEquals("tt1375666", result.imdbID());
@@ -157,4 +157,55 @@ class MovieServiceTest {
         );
     }
 
+    @Test
+    void createMovieResponseDtoFromImdbId_returnsMovieResponseDto_whenOmdbResponseIsValid() {
+        OmdbMovieDetailsDto omdbResponse = createValidDetailsDto();
+
+        when(omdbClient.findByImdbId(VALID_IMDB_ID)).thenReturn(omdbResponse);
+
+        MovieResponseDto expected = new MovieResponseDto(
+                "Inception",
+                "poster.jpg",
+                "2010",
+                "movie",
+                VALID_IMDB_ID,
+                "Sci-Fi",
+                "74",
+                "8.8",
+                "Dreams..."
+        );
+
+        assertEquals(expected, movieService.createMovieResponseDtoFromImdbId(VALID_IMDB_ID));
+        verify(omdbClient).findByImdbId(VALID_IMDB_ID);
+        verifyNoMoreInteractions(omdbClient, openAiClient);
+    }
+
+    @Test
+    void createMovieResponseDtoFromImdbId_throwsMovieNotFoundException_whenOmdbResponseIsNull() {
+        when(omdbClient.findByImdbId("tt1375666")).thenReturn(null);
+
+        assertThrows(
+                MovieNotFoundException.class,
+                () -> movieService.createMovieResponseDtoFromImdbId("tt1375666")
+        );
+
+        verify(omdbClient).findByImdbId("tt1375666");
+        verifyNoMoreInteractions(omdbClient, openAiClient);
+    }
+
+    @Test
+    void createMovieResponseDtoFromImdbId_throwsMovieNotFoundException_whenOmdbResponseIsFalse() {
+        OmdbMovieDetailsDto omdbResponse = new OmdbMovieDetailsDto();
+        omdbResponse.setResponse("False");
+
+        when(omdbClient.findByImdbId(VALID_IMDB_ID)).thenReturn(omdbResponse);
+
+        assertThrows(
+                MovieNotFoundException.class,
+                () -> movieService.createMovieResponseDtoFromImdbId(VALID_IMDB_ID)
+        );
+
+        verify(omdbClient).findByImdbId(VALID_IMDB_ID);
+        verifyNoMoreInteractions(omdbClient, openAiClient);
+    }
 }

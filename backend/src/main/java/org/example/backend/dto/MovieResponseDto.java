@@ -1,6 +1,6 @@
-package org.example.backend.domain;
+package org.example.backend.dto;
 
-public record MovieDetails(
+public record MovieResponseDto(
         String title,
         String poster,
         String year,

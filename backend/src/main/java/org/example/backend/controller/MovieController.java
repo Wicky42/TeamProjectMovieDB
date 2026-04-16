@@ -1,6 +1,6 @@
 package org.example.backend.controller;
 
-import org.example.backend.domain.MovieDetails;
+import org.example.backend.dto.MovieResponseDto;
 import org.example.backend.service.MovieService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +18,17 @@ class MovieController {
     }
 
     @GetMapping("/{title}")
-    public ResponseEntity<MovieDetails> getMovieByTitle(@PathVariable String title) {
+    public ResponseEntity<MovieResponseDto> getMovieByTitle(@PathVariable String title) {
         return ResponseEntity.ok(movieService.retrieveMovieDetailsByTitle(title));
     }
 
     @GetMapping
-    public ResponseEntity<List<MovieDetails>> getMoviesByTitle(@RequestParam String title) {
+    public ResponseEntity<List<MovieResponseDto>> getMoviesByTitle(@RequestParam String title) {
         return ResponseEntity.ok(movieService.retrieveMovies(title));
     }
 
     @PostMapping("/suggestion")
-    public MovieDetails getMovieByAiSuggestion(@RequestBody String prompt){
+    public MovieResponseDto getMovieByAiSuggestion(@RequestBody String prompt){
         return movieService.getMovieFromAiSuggestion(prompt);
     }
 }

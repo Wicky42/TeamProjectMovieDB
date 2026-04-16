@@ -18,4 +18,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleOmdbClientError(OmdbClientException ex) {
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(ex.getMessage());
     }
+
+    @ExceptionHandler(WatchlistNotFoundException.class)
+    public ResponseEntity<String> handleWatchlistNotFound(WatchlistNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateWatchlistEntryException.class)
+    public ResponseEntity<String> handleDuplicateWatchlistEntry(DuplicateWatchlistEntryException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
 }

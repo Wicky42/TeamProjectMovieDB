@@ -1,0 +1,53 @@
+package org.example.backend.service;
+
+import org.example.backend.domain.WatchlistEntry;
+import org.example.backend.dto.MovieResponseDto;
+import org.example.backend.dto.WatchlistEntryDto;
+import org.example.backend.repo.WatchlistEntryRepo;
+import org.springframework.stereotype.Service;
+
+@Service
+public class WatchlistEntryService {
+  private final IdService idService;
+  private final MovieService movieService;
+  private final WatchlistEntryRepo watchlistEntryRepo;
+
+  public WatchlistEntryService(IdService idService, MovieService movieService, WatchlistEntryRepo watchlistEntryRepo) {
+    this.idService = idService;
+    this.movieService = movieService;
+    this.watchlistEntryRepo = watchlistEntryRepo;
+  }
+
+  public WatchlistEntry getOrCreateWatchlistEntry(String imdbId) {
+    WatchlistEntry entry = watchlistEntryRepo.findByImdbId(imdbId)
+      .orElseGet(() -> watchlistEntryRepo.save(
+        new WatchlistEntry(
+          idService.generateWatchlistEntryId(),
+          imdbId,
+          "",
+          false
+        )
+      ));
+
+    return entry;
+  }
+
+  public WatchlistEntryDto toWatchlistEntryDto(WatchlistEntry entry) {
+    MovieResponseDto movieDto = movieService.createMovieResponseDtoFromImdbId(entry.imdbId());
+
+    return new WatchlistEntryDto(
+      entry.id(),
+      entry.imdbId(),
+      entry.userRating(),
+      entry.watched(),
+      movieDto.title(),
+      movieDto.poster(),
+      movieDto.year(),
+      movieDto.type(),
+      movieDto.genre(),
+      movieDto.metascore(),
+      movieDto.imdbRating(),
+      movieDto.plot()
+    );
+  }
+}

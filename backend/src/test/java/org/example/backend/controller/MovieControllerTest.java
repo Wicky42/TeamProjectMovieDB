@@ -1,6 +1,6 @@
 package org.example.backend.controller;
 
-import org.example.backend.domain.MovieDetails;
+import org.example.backend.dto.MovieResponseDto;
 import org.example.backend.service.MovieService;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class MovieControllerTest {
 
     private static final String VALID_TITLE = "Inception";
 
-    private static final MovieDetails VALID_DATA = new MovieDetails(
+    private static final MovieResponseDto VALID_DATA = new MovieResponseDto(
             "Inception",
             "https://image.url/inception.jpg",
             "2010",
@@ -40,9 +40,9 @@ class MovieControllerTest {
             "A thief who steals corporate secrets through dream-sharing technology."
     );
 
-    private static final List<MovieDetails> VALID_LIST = List.of(
+    private static final List<MovieResponseDto> VALID_LIST = List.of(
             VALID_DATA,
-            new MovieDetails(
+            new MovieResponseDto(
                     "Interstellar",
                     "https://image.url/interstellar.jpg",
                     "2014",
