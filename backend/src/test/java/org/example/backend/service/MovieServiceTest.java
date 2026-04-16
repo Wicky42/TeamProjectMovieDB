@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -156,4 +157,55 @@ class MovieServiceTest {
         );
     }
 
+    @Test
+    void createMovieResponseDtoFromImdbId_returnsMovieResponseDto_whenOmdbResponseIsValid() {
+        OmdbMovieDetailsDto omdbResponse = createValidDetailsDto();
+
+        when(omdbClient.findByImdbId(VALID_IMDB_ID)).thenReturn(omdbResponse);
+
+        MovieResponseDto expected = new MovieResponseDto(
+                "Inception",
+                "poster.jpg",
+                "2010",
+                "movie",
+                VALID_IMDB_ID,
+                "Sci-Fi",
+                "74",
+                "8.8",
+                "Dreams..."
+        );
+
+        assertEquals(expected, movieService.createMovieResponseDtoFromImdbId(VALID_IMDB_ID));
+        verify(omdbClient).findByImdbId(VALID_IMDB_ID);
+        verifyNoMoreInteractions(omdbClient, openAiClient);
+    }
+
+    @Test
+    void createMovieResponseDtoFromImdbId_throwsMovieNotFoundException_whenOmdbResponseIsNull() {
+        when(omdbClient.findByImdbId("tt1375666")).thenReturn(null);
+
+        assertThrows(
+                MovieNotFoundException.class,
+                () -> movieService.createMovieResponseDtoFromImdbId("tt1375666")
+        );
+
+        verify(omdbClient).findByImdbId("tt1375666");
+        verifyNoMoreInteractions(omdbClient, openAiClient);
+    }
+
+    @Test
+    void createMovieResponseDtoFromImdbId_throwsMovieNotFoundException_whenOmdbResponseIsFalse() {
+        OmdbMovieDetailsDto omdbResponse = new OmdbMovieDetailsDto();
+        omdbResponse.setResponse("False");
+
+        when(omdbClient.findByImdbId(VALID_IMDB_ID)).thenReturn(omdbResponse);
+
+        assertThrows(
+                MovieNotFoundException.class,
+                () -> movieService.createMovieResponseDtoFromImdbId(VALID_IMDB_ID)
+        );
+
+        verify(omdbClient).findByImdbId(VALID_IMDB_ID);
+        verifyNoMoreInteractions(omdbClient, openAiClient);
+    }
 }
