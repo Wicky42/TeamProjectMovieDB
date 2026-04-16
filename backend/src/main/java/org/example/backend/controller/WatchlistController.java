@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import org.example.backend.domain.Watchlist;
-import org.example.backend.dto.AddWatchlistEntryRequestDto;
+import org.example.backend.dto.ImdbIdRequestDto;
 import org.example.backend.dto.CreateWatchlistRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.dto.WatchlistResponseDto;
@@ -49,7 +49,7 @@ class WatchlistController {
   @PostMapping("/{watchlistId}/entries")
   public WatchlistEntryDto addEntry(
     @PathVariable String watchlistId,
-    @RequestBody AddWatchlistEntryRequestDto entry
+    @RequestBody ImdbIdRequestDto entry
   ) {
     return watchlistService.addEntry(watchlistId, entry.imdbId());
   }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.example.backend.domain.Watchlist;
-import org.example.backend.dto.AddWatchlistEntryRequestDto;
+import org.example.backend.dto.ImdbIdRequestDto;
 import org.example.backend.dto.CreateWatchlistRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.dto.WatchlistResponseDto;
@@ -129,7 +129,7 @@ class WatchlistControllerTest {
 
   @Test
   void addEntry_returnsOkAndWatchlistEntryDto_whenCalledWithValidData() throws Exception {
-    AddWatchlistEntryRequestDto request = new AddWatchlistEntryRequestDto("tt1375666");
+    ImdbIdRequestDto request = new ImdbIdRequestDto("tt1375666");
 
     WatchlistEntryDto response = new WatchlistEntryDto(
       "WE-1",
@@ -157,7 +157,7 @@ class WatchlistControllerTest {
 
   @Test
   void addEntry_returnsNotFound_whenWatchlistDoesNotExist() throws Exception {
-    AddWatchlistEntryRequestDto request = new AddWatchlistEntryRequestDto("tt1375666");
+    ImdbIdRequestDto request = new ImdbIdRequestDto("tt1375666");
 
     when(watchlistService.addEntry("W-404", "tt1375666"))
       .thenThrow(new WatchlistNotFoundException("W-404"));
@@ -170,7 +170,7 @@ class WatchlistControllerTest {
 
   @Test
   void addEntry_returnsConflict_whenMovieAlreadyExistsInWatchlist() throws Exception {
-    AddWatchlistEntryRequestDto request = new AddWatchlistEntryRequestDto("tt1375666");
+    ImdbIdRequestDto request = new ImdbIdRequestDto("tt1375666");
 
     when(watchlistService.addEntry("W-1", "tt1375666"))
       .thenThrow(new DuplicateWatchlistEntryException("W-1", "tt1375666"));
