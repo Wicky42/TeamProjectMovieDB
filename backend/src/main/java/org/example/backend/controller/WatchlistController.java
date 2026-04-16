@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import org.example.backend.domain.Watchlist;
+import org.example.backend.dto.AddWatchlistEntryRequestDto;
 import org.example.backend.dto.CreateWatchlistRequestDto;
+import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.dto.WatchlistResponseDto;
 import org.example.backend.service.WatchlistService;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +44,13 @@ class WatchlistController {
     return watchlistService.createWatchlist(requestData.description(), requestData.name())
       .map(ResponseEntity::ok)
       .orElse(ResponseEntity.badRequest().build());
+  }
+
+  @PostMapping("/{watchlistId}/entries")
+  public WatchlistEntryDto addEntry(
+    @PathVariable String watchlistId,
+    @RequestBody AddWatchlistEntryRequestDto entry
+  ) {
+    return watchlistService.addEntry(watchlistId, entry.imdbId());
   }
 }

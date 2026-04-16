@@ -1,6 +1,7 @@
 package org.example.backend.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,7 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.example.backend.domain.Watchlist;
+import org.example.backend.domain.WatchlistEntry;
+import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.dto.WatchlistResponseDto;
+import org.example.backend.exception.DuplicateWatchlistEntryException;
+import org.example.backend.exception.WatchlistNotFoundException;
 import org.example.backend.repo.WatchlistRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class WatchlistServiceTest {
   @Mock IdService idService;
+  @Mock WatchlistEntryService watchlistEntryService;
   @Mock WatchlistRepo watchlistRepo;
   @InjectMocks WatchlistService watchlistService;
 
@@ -109,5 +115,99 @@ class WatchlistServiceTest {
 
     assertTrue(result.isEmpty());
     verifyNoMoreInteractions(idService, watchlistRepo);
+  }
+
+ @Test
+  void addEntry_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
+
+    assertThrows(
+      WatchlistNotFoundException.class,
+      () -> watchlistService.addEntry("W-1", "tt1375666")
+    );
+
+    verify(watchlistRepo).findById("W-1");
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void addEntry_throwsDuplicateWatchlistEntryException_whenEntryAlreadyExistsInWatchlist() {
+    Watchlist watchlist = new Watchlist(
+      "W-1",
+      "My Watchlist",
+      List.of("WE-1"),
+      "My description"
+    );
+
+    WatchlistEntry entry = new WatchlistEntry(
+      "WE-1",
+      "tt1375666",
+      "",
+      false
+    );
+
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.of(watchlist));
+    when(watchlistEntryService.getOrCreateWatchlistEntry("tt1375666")).thenReturn(entry);
+
+    assertThrows(
+      DuplicateWatchlistEntryException.class,
+      () -> watchlistService.addEntry("W-1", "tt1375666")
+    );
+
+    verify(watchlistRepo).findById("W-1");
+    verify(watchlistEntryService).getOrCreateWatchlistEntry("tt1375666");
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void addEntry_returnsWatchlistEntryDto_whenEntryIsAddedSuccessfully() {
+    Watchlist watchlist = new Watchlist(
+      "W-1",
+      "My Watchlist",
+      List.of("WE-1"),
+      "My description"
+    );
+
+    WatchlistEntry entry = new WatchlistEntry(
+      "WE-2",
+      "tt1375666",
+      "",
+      false
+    );
+
+    Watchlist updatedWatchlist = new Watchlist(
+      "W-1",
+      "My Watchlist",
+      List.of("WE-1", "WE-2"),
+      "My description"
+    );
+
+    WatchlistEntryDto entryDto = new WatchlistEntryDto(
+      "WE-2",
+      "tt1375666",
+      "",
+      false,
+      "Inception",
+      "poster-url",
+      "2010",
+      "movie",
+      "Sci-Fi",
+      "74",
+      "8.8",
+      "Plot"
+    );
+
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.of(watchlist));
+    when(watchlistEntryService.getOrCreateWatchlistEntry("tt1375666")).thenReturn(entry);
+    when(watchlistEntryService.toWatchlistEntryDto(entry)).thenReturn(entryDto);
+    when(watchlistRepo.save(updatedWatchlist)).thenReturn(updatedWatchlist);
+
+    assertEquals(entryDto, watchlistService.addEntry("W-1", "tt1375666"));
+
+    verify(watchlistRepo).findById("W-1");
+    verify(watchlistEntryService).getOrCreateWatchlistEntry("tt1375666");
+    verify(watchlistRepo).save(updatedWatchlist);
+    verify(watchlistEntryService).toWatchlistEntryDto(entry);
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
   }
 }
