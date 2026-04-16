@@ -25,8 +25,8 @@ const MovieCard: React.FC<MovieCardProps> = ({ title, poster, year, metascore, i
         </div>
         <div className="badge" style={{marginTop: '.5rem'}}>IMDb: {imdbRating} | Metascore: {metascore}</div>
         <p className="movie-card__overview">{plot.substring(0, 100)}...</p>
-
       </div>
+        <button>Add to Watchlist</button>
     </article>
   );
 };
