@@ -29,7 +29,7 @@ public class MovieService {
             throw new MovieNotFoundException(title);
         }
 
-        return toMovieDetails(response);
+        return toMovieResponseDto(response);
     }
 
     public List<MovieResponseDto> retrieveMovies(String title) {
@@ -37,7 +37,7 @@ public class MovieService {
 
         return searchResponse.getSearch().stream()
                 .map(movie -> omdbClient.findByImdbId(movie.getImdbID()))
-                .map(this::toMovieDetails)
+                .map(this::toMovieResponseDto)
                 .toList();
     }
 
@@ -47,12 +47,12 @@ public class MovieService {
         if( !validateAiResponse(openAiResponse)) {
             throw new OpenAIResponseException("Kein Film zum Prompt gefunden");
         }
-        return toMovieDetails(omdbClient.findByImdbId(openAiResponse));
+        return toMovieResponseDto(omdbClient.findByImdbId(openAiResponse));
     }
 
     //* --------------- HELPER -------------*//
 
-    private MovieResponseDto toMovieDetails(OmdbMovieDetailsDto dto) {
+    private MovieResponseDto toMovieResponseDto(OmdbMovieDetailsDto dto) {
         return new MovieResponseDto(
                 dto.getTitle(),
                 dto.getPoster(),
