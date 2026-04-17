@@ -81,14 +81,15 @@ class WatchlistControllerTest {
     when(watchlistService.findAll()).thenReturn(List.of());
 
     mockMvc.perform(get("/api/watchlists"))
-            .andExpect(status().isOk())
-            .andExpect(content().json("[]"));
+      .andExpect(status().isOk())
+      .andExpect(content().json("[]"));
   }
 
   @Test
   void findAll_returnsOkAndListOfWatchlists_whenWatchlistsPresentInDb() throws Exception {
-    List<Watchlist> expectedWatchlists =
-            List.of(validWatchlist(), validWatchlist().withId("2"));
+    WatchlistResponseDto w1 = validWatchlistResponseDto();
+    WatchlistResponseDto w2 = validWatchlistResponseDto().withId("W-2");
+    List <WatchlistResponseDto> expectedWatchlists = List.of(w1, w2);
 
     when(watchlistService.findAll()).thenReturn(expectedWatchlists);
 

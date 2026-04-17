@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import org.example.backend.domain.Watchlist;
 import org.example.backend.dto.ImdbIdRequestDto;
 import org.example.backend.dto.CreateWatchlistRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
@@ -28,8 +27,8 @@ class WatchlistController {
   }
 
   @GetMapping()
-  public ResponseEntity<List<Watchlist>> findAll() {
-    return ResponseEntity.ok(watchlistService.findAll());
+  public List<WatchlistResponseDto> findAll() {
+    return watchlistService.findAll();
   }
 
   @GetMapping("/{id}")

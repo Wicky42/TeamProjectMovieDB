@@ -29,8 +29,24 @@ public class WatchlistService {
     this.watchlistEntryService = watchlistEntryService;
   }
 
-  public List<Watchlist> findAll() {
-    return watchlistRepo.findAll();
+  public List<WatchlistResponseDto> findAll() {
+    List<Watchlist> watchlist = watchlistRepo.findAll();
+    if (watchlist.isEmpty()) return List.of();
+
+    List<WatchlistResponseDto> responseDtos = new ArrayList<>();
+    for (Watchlist w : watchlist) {
+      List<WatchlistEntryDto> entryDtos = watchlistEntryService.createWatchListEntryDtoList(w.watchlistEntryIds());
+      responseDtos.add(
+        new WatchlistResponseDto(
+          w.id(),
+          w.name(),
+          entryDtos,
+          w.description()
+        )
+      );
+    }
+
+    return responseDtos;
   }
 
   public WatchlistResponseDto findById(String id) {

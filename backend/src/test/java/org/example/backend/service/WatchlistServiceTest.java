@@ -67,12 +67,33 @@ class WatchlistServiceTest {
 
   @Test
   void findAll_returnsRepoFindAll_whenCalled() {
-    Watchlist watchlist = validWatchlist();
-    when(watchlistRepo.findAll()).thenReturn(List.of(watchlist));
+    Watchlist w1 = validWatchlist()
+    .withWatchlistEntryIds(List.of("WE-1"));
+    Watchlist w2 = validWatchlist()
+    .withId("W-2")
+    .withWatchlistEntryIds(List.of("WE-2"));
 
-    assertEquals(List.of(watchlist), watchlistService.findAll());
+    WatchlistEntryDto we1 = validWatchlistEntryDto().withId("WE-1");
+    WatchlistEntryDto we2 = validWatchlistEntryDto().withId("WE-2");
+
+    WatchlistResponseDto wr1 = validWatchlistResponseDto()
+      .withEntries(List.of(we1));
+    WatchlistResponseDto wr2 = validWatchlistResponseDto()
+      .withId("W-2")
+      .withEntries(List.of(we2));
+
+    when(watchlistRepo.findAll()).thenReturn(List.of(w1, w2));
+    when(watchlistEntryService.createWatchListEntryDtoList(List.of("WE-1")))
+      .thenReturn(List.of(we1));
+    when(watchlistEntryService.createWatchListEntryDtoList(List.of("WE-2")))
+      .thenReturn(List.of(we2));
+
+    assertEquals(List.of(wr1, wr2), watchlistService.findAll());
+
     verify(watchlistRepo).findAll();
-    verifyNoMoreInteractions(watchlistRepo);
+    verify(watchlistEntryService).createWatchListEntryDtoList(List.of("WE-1"));
+    verify(watchlistEntryService).createWatchListEntryDtoList(List.of("WE-2"));
+    verifyNoMoreInteractions(watchlistRepo, watchlistEntryService);
   }
 
   @Test
