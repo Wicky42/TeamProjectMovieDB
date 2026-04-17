@@ -1,5 +1,7 @@
 package org.example.backend.service;
 
+import java.util.List;
+
 import org.example.backend.domain.WatchlistEntry;
 import org.example.backend.dto.MovieResponseDto;
 import org.example.backend.dto.UpdateWatchlistEntryRequestDto;
@@ -66,5 +68,14 @@ public class WatchlistEntryService {
 
     watchlistEntryRepo.save(updated);
     return toWatchlistEntryDto(updated);
+  }
+
+  public List<WatchlistEntryDto> createWatchListEntryDtoList(List<String> entryIds) {
+    return entryIds.stream()
+      .map(id -> watchlistEntryRepo.findById(id)
+        .map(this::toWatchlistEntryDto)
+        .orElseThrow(() -> new WatchlistEntryNotFoundException(id))
+      )
+      .toList();
   }
 }

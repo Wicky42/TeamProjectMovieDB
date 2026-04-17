@@ -50,19 +50,46 @@ class WatchlistControllerTest {
     );
   }
 
+  private WatchlistResponseDto validWatchlistResponseDto() {
+    return new WatchlistResponseDto(
+      "W-1",
+      "Some name",
+      List.of(validWatchlistEntryDto()),
+      "Some description"
+    );
+  }
+
+  private WatchlistEntryDto validWatchlistEntryDto() {
+    return new WatchlistEntryDto(
+      "WE-1",
+      "tt1375666",
+      "",
+      false,
+      "Inception",
+      "poster-url",
+      "2010",
+      "movie",
+      "Sci-Fi",
+      "74",
+      "8.8",
+      "Plot"
+    );
+  }
+
   @Test
   void findAll_returnsOkAndEmptyList_whenNoWatchlistInDb() throws Exception {
     when(watchlistService.findAll()).thenReturn(List.of());
 
     mockMvc.perform(get("/api/watchlists"))
-            .andExpect(status().isOk())
-            .andExpect(content().json("[]"));
+      .andExpect(status().isOk())
+      .andExpect(content().json("[]"));
   }
 
   @Test
   void findAll_returnsOkAndListOfWatchlists_whenWatchlistsPresentInDb() throws Exception {
-    List<Watchlist> expectedWatchlists =
-            List.of(validWatchlist(), validWatchlist().withId("2"));
+    WatchlistResponseDto w1 = validWatchlistResponseDto();
+    WatchlistResponseDto w2 = validWatchlistResponseDto().withId("W-2");
+    List <WatchlistResponseDto> expectedWatchlists = List.of(w1, w2);
 
     when(watchlistService.findAll()).thenReturn(expectedWatchlists);
 
@@ -72,21 +99,22 @@ class WatchlistControllerTest {
   }
 
   @Test
-  void findById_returnsOkAndWatchlist_whenQueriedWatchlistExists() throws Exception {
-    Watchlist watchlist = validWatchlist();
+  void findById_returnsWatchlistResponseDto_whenQueriedWatchlistExists() throws Exception {
+    WatchlistResponseDto expectedResponse = validWatchlistResponseDto();
 
-    when(watchlistService.findById("1")).thenReturn(Optional.of(watchlist));
+    when(watchlistService.findById("W-1")).thenReturn(expectedResponse);
 
-    mockMvc.perform(get("/api/watchlists/1"))
-            .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(watchlist)));
+    mockMvc.perform(get("/api/watchlists/W-1"))
+        .andExpect(status().isOk())
+        .andExpect(content().json(objectMapper.writeValueAsString(expectedResponse)));
   }
 
   @Test
-  void findById_returnsNotFound_whenQueriedWatchlistDoesNotExist() throws Exception {
-    when(watchlistService.findById("999")).thenReturn(Optional.empty());
+  void findById_throwsWatchlistNotFoundException_whenQueriedWatchlistDoesNotExist() throws Exception {
+    when(watchlistService.findById("1"))
+      .thenThrow(new WatchlistNotFoundException("1"));
 
-    mockMvc.perform(get("/api/watchlists/999"))
+    mockMvc.perform(get("/api/watchlists/1"))
       .andExpect(status().isNotFound());
   }
 

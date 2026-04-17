@@ -29,12 +29,31 @@ public class WatchlistService {
     this.watchlistEntryService = watchlistEntryService;
   }
 
-  public List<Watchlist> findAll() {
-    return watchlistRepo.findAll();
+  public List<WatchlistResponseDto> findAll() {
+    List<Watchlist> watchlist = watchlistRepo.findAll();
+    if (watchlist.isEmpty()) return List.of();
+
+    List<WatchlistResponseDto> responseDtos = new ArrayList<>();
+    for (Watchlist w : watchlist) {
+      List<WatchlistEntryDto> entryDtos = watchlistEntryService.createWatchListEntryDtoList(w.watchlistEntryIds());
+      responseDtos.add(
+        new WatchlistResponseDto(
+          w.id(),
+          w.name(),
+          entryDtos,
+          w.description()
+        )
+      );
+    }
+
+    return responseDtos;
   }
 
-  public Optional<Watchlist> findById(String id) {
-    return watchlistRepo.findById(id);
+  public WatchlistResponseDto findById(String id) {
+    Watchlist watchlist = watchlistRepo.findById(id)
+      .orElseThrow(() -> new WatchlistNotFoundException(id));
+
+    return toWatchlistResponseDto(watchlist);
   }
 
   public Optional<WatchlistResponseDto> createWatchlist(String description, String name) {
@@ -85,5 +104,16 @@ public class WatchlistService {
     List<String> updatedEntryIds = new ArrayList<>(watchlist.watchlistEntryIds());
     updatedEntryIds.remove(entryId);
     watchlistRepo.save(watchlist.withWatchlistEntryIds(updatedEntryIds));
+  }
+
+  private WatchlistResponseDto toWatchlistResponseDto(Watchlist watchlist) {
+    List<WatchlistEntryDto> entryDtos = watchlistEntryService.createWatchListEntryDtoList(watchlist.watchlistEntryIds());
+
+    return new WatchlistResponseDto(
+      watchlist.id(),
+      watchlist.name(),
+      entryDtos,
+      watchlist.description()
+    );
   }
 }
