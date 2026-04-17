@@ -52,10 +52,10 @@ class WatchlistEntryServiceTest {
   @Test
   void getOrCreateWatchlistEntry_returnsExistingEntry_whenEntryAlreadyExists() {
     WatchlistEntry entry = validWatchlistEntry();
-    when(watchlistEntryRepo.findByImdbId(entry.imdbId())).thenReturn(Optional.of(entry));
+    when(watchlistEntryRepo.findByImdbID(entry.imdbID())).thenReturn(Optional.of(entry));
 
-    assertEquals(entry, watchlistEntryService.getOrCreateWatchlistEntry(entry.imdbId()));
-    verify(watchlistEntryRepo).findByImdbId(entry.imdbId());
+    assertEquals(entry, watchlistEntryService.getOrCreateWatchlistEntry(entry.imdbID()));
+    verify(watchlistEntryRepo).findByImdbID(entry.imdbID());
     verifyNoMoreInteractions(idService, movieService, watchlistEntryRepo);
   }
 
@@ -69,12 +69,12 @@ class WatchlistEntryServiceTest {
       false
     );
 
-    when(watchlistEntryRepo.findByImdbId(imdbId)).thenReturn(Optional.empty());
+    when(watchlistEntryRepo.findByImdbID(imdbId)).thenReturn(Optional.empty());
     when(idService.generateWatchlistEntryId()).thenReturn("WE-1");
     when(watchlistEntryRepo.save(newEntry)).thenReturn(newEntry);
 
     assertEquals(newEntry, watchlistEntryService.getOrCreateWatchlistEntry(imdbId));
-    verify(watchlistEntryRepo).findByImdbId(imdbId);
+    verify(watchlistEntryRepo).findByImdbID(imdbId);
     verify(idService).generateWatchlistEntryId();
     verify(watchlistEntryRepo).save(newEntry);
     verifyNoMoreInteractions(idService, movieService, watchlistEntryRepo);
@@ -85,11 +85,11 @@ class WatchlistEntryServiceTest {
     WatchlistEntry entry = validWatchlistEntry();
     MovieResponseDto movieDto = validMovieResponseDto();
 
-    when(movieService.createMovieResponseDtoFromImdbId(entry.imdbId())).thenReturn(movieDto);
+    when(movieService.createMovieResponseDtoFromImdbId(entry.imdbID())).thenReturn(movieDto);
 
     WatchlistEntryDto expected = new WatchlistEntryDto(
       entry.id(),
-      entry.imdbId(),
+      entry.imdbID(),
       entry.userRating(),
       entry.watched(),
       movieDto.title(),
@@ -103,7 +103,7 @@ class WatchlistEntryServiceTest {
     );
 
     assertEquals(expected, watchlistEntryService.toWatchlistEntryDto(entry));
-    verify(movieService).createMovieResponseDtoFromImdbId(entry.imdbId());
+    verify(movieService).createMovieResponseDtoFromImdbId(entry.imdbID());
     verifyNoMoreInteractions(idService, movieService, watchlistEntryRepo);
   }
 }

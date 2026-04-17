@@ -2,7 +2,7 @@ package org.example.backend.dto;
 
 public record WatchlistEntryDto(
   String id,
-  String imdbId,
+  String imdbID,
   String userRating,
   boolean watched,
   String title,

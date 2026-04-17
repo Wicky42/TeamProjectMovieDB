@@ -51,6 +51,6 @@ class WatchlistController {
     @PathVariable String watchlistId,
     @RequestBody ImdbIdRequestDto entry
   ) {
-    return watchlistService.addEntry(watchlistId, entry.imdbId());
+    return watchlistService.addEntry(watchlistId, entry.imdbID());
   }
 }

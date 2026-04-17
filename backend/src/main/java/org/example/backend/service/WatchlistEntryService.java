@@ -18,12 +18,12 @@ public class WatchlistEntryService {
     this.watchlistEntryRepo = watchlistEntryRepo;
   }
 
-  public WatchlistEntry getOrCreateWatchlistEntry(String imdbId) {
-    WatchlistEntry entry = watchlistEntryRepo.findByImdbId(imdbId)
+  public WatchlistEntry getOrCreateWatchlistEntry(String imdbID) {
+    WatchlistEntry entry = watchlistEntryRepo.findByImdbID(imdbID)
       .orElseGet(() -> watchlistEntryRepo.save(
         new WatchlistEntry(
           idService.generateWatchlistEntryId(),
-          imdbId,
+          imdbID,
           "",
           false
         )
@@ -33,11 +33,11 @@ public class WatchlistEntryService {
   }
 
   public WatchlistEntryDto toWatchlistEntryDto(WatchlistEntry entry) {
-    MovieResponseDto movieDto = movieService.createMovieResponseDtoFromImdbId(entry.imdbId());
+    MovieResponseDto movieDto = movieService.createMovieResponseDtoFromImdbId(entry.imdbID());
 
     return new WatchlistEntryDto(
       entry.id(),
-      entry.imdbId(),
+      entry.imdbID(),
       entry.userRating(),
       entry.watched(),
       movieDto.title(),

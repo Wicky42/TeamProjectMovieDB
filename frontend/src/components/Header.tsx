@@ -12,7 +12,9 @@ const Header: React.FC = () => (
             <Link to="/" className="header__link">
                 Home
             </Link>
-
+            <Link to="/watchlists" className="header__link">
+                Watchlists
+            </Link>
             <Link to="/create-watchlist" className="header__cta">
                 Create Watchlist
             </Link>

@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public record WatchlistEntry(
   @Id
   String id,
-  String imdbId,
+  String imdbID,
   String userRating,
   boolean watched
 ) {

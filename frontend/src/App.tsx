@@ -6,6 +6,7 @@ import MovieSearch from './components/MovieSearch';
 import MovieAiRecommendation from './components/MovieAiRecommendation';
 import { Routes, Route } from "react-router-dom";
 import CreateWatchlistPage from "./pages/CreateWatchlistPage.tsx";
+import WatchlistsPage from "./pages/WatchlistsPage.tsx";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
                   path="/create-watchlist"
                   element={<CreateWatchlistPage />}
               />
+              <Route path="/watchlists" element={<WatchlistsPage />} />
           </Routes>
       </main>
       <Footer />

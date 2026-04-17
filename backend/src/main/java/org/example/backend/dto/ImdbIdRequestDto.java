@@ -1,5 +1,5 @@
 package org.example.backend.dto;
 
-public record ImdbIdRequestDto(String imdbId) {
+public record ImdbIdRequestDto(String imdbID) {
 
 }

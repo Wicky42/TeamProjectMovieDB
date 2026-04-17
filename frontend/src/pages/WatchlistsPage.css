@@ -1,0 +1,70 @@
+.watchlists-page {
+    padding: 2rem;
+    color: white;
+}
+
+.watchlists-page__header {
+    margin-bottom: 1.5rem;
+}
+
+.watchlists-page__title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.watchlists-page__subtitle {
+    margin-top: 0.4rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.watchlists-page__state {
+    font-size: 0.95rem;
+}
+
+.watchlists-page__state--error {
+    color: #fca5a5;
+}
+
+.watchlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.watchlist-card {
+    padding: 1.25rem;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(16, 24, 42, 0.95), rgba(21, 32, 64, 0.9));
+    border: 1px solid rgba(77, 175, 255, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.watchlist-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.watchlist-card__title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.watchlist-card__count {
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(77, 175, 255, 0.12);
+    color: #8ecbff;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.watchlist-card__description {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.5;
+}
