@@ -1,0 +1,63 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 2rem;
+    margin-bottom: 32px;
+
+    background: linear-gradient(90deg, #10182a 80%, #152040 100%);
+    border-bottom: 1.5px solid #4dafff;
+    box-shadow: 0 4px 24px rgba(77, 175, 255, 0.07);
+}
+
+/* LEFT SIDE */
+.header__brand {
+    display: flex;
+    align-items: center;
+}
+
+.header__logo {
+    width: 250px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* RIGHT SIDE NAV */
+.header__nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* normal link */
+.header__link {
+    color: white;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+}
+
+.header__link:hover {
+    color: #4dafff;
+}
+
+/* CTA button */
+.header__cta {
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    padding: 8px 14px;
+    border-radius: 8px;
+
+    color: white;
+    background: linear-gradient(135deg, #06b6d4, #6366f1);
+
+    transition: all 0.2s ease;
+}
+
+.header__cta:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+}

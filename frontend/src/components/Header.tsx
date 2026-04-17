@@ -1,24 +1,23 @@
-
 import watchyLogo from '../assets/watchy_logo.png';
+import { Link } from "react-router-dom";
+import "./Header.css";
 
 const Header: React.FC = () => (
-  <header
-    className="app-shell__header"
-    style={{
-      padding: '2rem 2rem',
-      background: 'linear-gradient(90deg, #10182a 80%, #152040 100%)',
-      borderBottom: '1.5px solid #4dafff',
-      marginBottom: '32px',
-      boxShadow: '0 4px 24px 0 rgba(77,175,255,0.07)'
-    }}
-  >
-    <div className="brand" style={{display: 'flex', alignItems: 'center', fontWeight: 700, fontSize: '2rem', color: 'var(--accent)'}}>
-      <img src={watchyLogo} alt="Watchy Logo" style={{height: 'auto', width: 250, marginRight: 12, objectFit: 'contain'}} />
-    </div>
-    <nav className="app-shell__nav">
-      {/* Add navigation links here */}
-    </nav>
-  </header>
+    <header className="header">
+        <div className="header__brand">
+            <img src={watchyLogo} alt="Watchy Logo" className="header__logo" />
+        </div>
+
+        <nav className="header__nav">
+            <Link to="/" className="header__link">
+                Home
+            </Link>
+
+            <Link to="/create-watchlist" className="header__cta">
+                Create Watchlist
+            </Link>
+        </nav>
+    </header>
 );
 
 export default Header;
