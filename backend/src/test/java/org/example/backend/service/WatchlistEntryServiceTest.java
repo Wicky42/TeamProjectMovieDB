@@ -295,4 +295,121 @@ class WatchlistEntryServiceTest {
       assertEquals(List.of(), result);
       verifyNoInteractions(watchlistEntryRepo);
   }
+
+  @Test
+  void findEntries_returnsAllEntries_whenWatchedIsNull() {
+    WatchlistEntry we1 = validWatchlistEntry()
+      .withId("WE-1")
+      .withWatched(true);
+    WatchlistEntry we2 = validWatchlistEntry()
+      .withId("WE-2")
+      .withImdbId("other-id")
+      .withWatched(false);
+
+    MovieResponseDto m1 = validMovieResponseDto();
+    MovieResponseDto m2 = validMovieResponseDto();
+
+    WatchlistEntryDto weDto1 = validWatchlistEntryDto()
+      .withId(we1.id())
+      .withWatched(we1.watched());
+
+    WatchlistEntryDto weDto2 = validWatchlistEntryDto()
+      .withId(we2.id())
+      .withImdbId(we2.imdbId())
+      .withWatched(we2.watched());
+
+    when(watchlistEntryRepo.findAll()).thenReturn(List.of(we1, we2));
+    when(movieService.createMovieResponseDtoFromImdbId(we1.imdbId())).thenReturn(m1);
+    when(movieService.createMovieResponseDtoFromImdbId(we2.imdbId())).thenReturn(m2);
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(null);
+
+    assertEquals(List.of(weDto1, weDto2), result);
+    verify(watchlistEntryRepo).findAll();
+    verify(movieService).createMovieResponseDtoFromImdbId(we1.imdbId());
+    verify(movieService).createMovieResponseDtoFromImdbId(we2.imdbId());
+    verifyNoMoreInteractions(watchlistEntryRepo, movieService);
+  }
+
+  @Test
+  void findEntries_returnsWatchedEntries_whenWatchedIsTrue() {
+    WatchlistEntry e1 = validWatchlistEntry().withId("WE-1").withWatched(true);
+    MovieResponseDto m1 = validMovieResponseDto();
+    WatchlistEntryDto expected = new WatchlistEntryDto(
+      e1.id(),
+      e1.imdbId(),
+      e1.userRating(),
+      e1.watched(),
+      m1.title(),
+      m1.poster(),
+      m1.year(),
+      m1.type(),
+      m1.genre(),
+      m1.metascore(),
+      m1.imdbRating(),
+      m1.plot()
+    );
+
+    when(watchlistEntryRepo.findAllByWatched(true)).thenReturn(List.of(e1));
+    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbId())).thenReturn(m1);
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(true);
+
+    assertEquals(List.of(expected), result);
+    verify(watchlistEntryRepo).findAllByWatched(true);
+    verify(movieService).createMovieResponseDtoFromImdbId(e1.imdbId());
+    verifyNoMoreInteractions(watchlistEntryRepo, movieService);
+  }
+
+  @Test
+  void findEntries_returnsUnwatchedEntries_whenWatchedIsFalse() {
+    WatchlistEntry e1 = validWatchlistEntry().withId("WE-1").withWatched(false);
+    MovieResponseDto m1 = validMovieResponseDto();
+    WatchlistEntryDto d1 = new WatchlistEntryDto(
+      e1.id(),
+      e1.imdbId(),
+      e1.userRating(),
+      e1.watched(),
+      m1.title(),
+      m1.poster(),
+      m1.year(),
+      m1.type(),
+      m1.genre(),
+      m1.metascore(),
+      m1.imdbRating(),
+      m1.plot()
+    );
+
+    when(watchlistEntryRepo.findAllByWatched(false)).thenReturn(List.of(e1));
+    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbId())).thenReturn(m1);
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(false);
+
+    assertEquals(List.of(d1), result);
+    verify(watchlistEntryRepo).findAllByWatched(false);
+    verify(movieService).createMovieResponseDtoFromImdbId(e1.imdbId());
+    verifyNoMoreInteractions(watchlistEntryRepo, movieService);
+  }
+
+  @Test
+  void findEntries_returnsEmptyList_whenNoEntriesExistAndWatchedIsNull() {
+    when(watchlistEntryRepo.findAll()).thenReturn(List.of());
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(null);
+
+    assertEquals(List.of(), result);
+    verify(watchlistEntryRepo).findAll();
+    verifyNoMoreInteractions(watchlistEntryRepo, movieService);
+  }
+
+  @Test
+  void findEntries_returnsEmptyList_whenNoWatchedEntriesExist() {
+    when(watchlistEntryRepo.findAllByWatched(true)).thenReturn(List.of());
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(true);
+
+    assertEquals(List.of(), result);
+    verify(watchlistEntryRepo).findAllByWatched(true);
+    verifyNoMoreInteractions(watchlistEntryRepo, movieService);
+  }
 }
