@@ -28,4 +28,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDuplicateWatchlistEntry(DuplicateWatchlistEntryException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
+
+    @ExceptionHandler(WatchlistEntryNotFoundException.class)
+    public ResponseEntity<String> handleWatchlistEntryNotFound(WatchlistEntryNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
 }
