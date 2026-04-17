@@ -2,7 +2,9 @@ package org.example.backend.service;
 
 import org.example.backend.domain.WatchlistEntry;
 import org.example.backend.dto.MovieResponseDto;
+import org.example.backend.dto.UpdateWatchlistEntryRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
+import org.example.backend.exception.WatchlistEntryNotFoundException;
 import org.example.backend.repo.WatchlistEntryRepo;
 import org.springframework.stereotype.Service;
 
@@ -49,5 +51,20 @@ public class WatchlistEntryService {
       movieDto.imdbRating(),
       movieDto.plot()
     );
+  }
+
+  public WatchlistEntryDto updateEntry(String entryId, UpdateWatchlistEntryRequestDto requestData) {
+    WatchlistEntry entry = watchlistEntryRepo.findById(entryId)
+      .orElseThrow(() -> new WatchlistEntryNotFoundException(entryId));
+
+    WatchlistEntry updated = new WatchlistEntry(
+      entry.id(),
+      entry.imdbId(),
+      requestData.userRating() != null ? requestData.userRating() : entry.userRating(),
+      requestData.watched() != null ? requestData.watched() : entry.watched()
+    );
+
+    watchlistEntryRepo.save(updated);
+    return toWatchlistEntryDto(updated);
   }
 }

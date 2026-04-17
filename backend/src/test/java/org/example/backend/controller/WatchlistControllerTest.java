@@ -20,7 +20,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import tools.jackson.databind.ObjectMapper;
 
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -179,5 +182,23 @@ class WatchlistControllerTest {
       .contentType("application/json")
       .content(objectMapper.writeValueAsString(request)))
       .andExpect(status().isConflict());
+  }
+
+  @Test
+  void removeEntry_returnsNoContent_whenCalledWithValidIds() throws Exception {
+    mockMvc.perform(delete("/api/watchlists/W-1/entries/WE-1"))
+      .andExpect(status().isNoContent());
+
+    verify(watchlistService).removeEntry("W-1", "WE-1");
+  }
+
+  @Test
+  void removeEntry_returnsNotFound_whenWatchlistDoesNotExist() throws Exception {
+    doThrow(new WatchlistNotFoundException("W-404"))
+        .when(watchlistService)
+        .removeEntry("W-404", "WE-1");
+
+    mockMvc.perform(delete("/api/watchlists/W-404/entries/WE-1"))
+      .andExpect(status().isNotFound());
   }
 }
