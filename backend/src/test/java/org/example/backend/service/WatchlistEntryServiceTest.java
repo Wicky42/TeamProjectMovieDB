@@ -1,6 +1,7 @@
 package org.example.backend.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -9,7 +10,9 @@ import java.util.Optional;
 
 import org.example.backend.domain.WatchlistEntry;
 import org.example.backend.dto.MovieResponseDto;
+import org.example.backend.dto.UpdateWatchlistEntryRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
+import org.example.backend.exception.WatchlistEntryNotFoundException;
 import org.example.backend.repo.WatchlistEntryRepo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -105,5 +108,118 @@ class WatchlistEntryServiceTest {
     assertEquals(expected, watchlistEntryService.toWatchlistEntryDto(entry));
     verify(movieService).createMovieResponseDtoFromImdbId(entry.imdbID());
     verifyNoMoreInteractions(idService, movieService, watchlistEntryRepo);
+  }
+
+  @Test
+  void updateEntry_updatesUserRatingAndWatchedSuccessfully() {
+    WatchlistEntry existing = new WatchlistEntry(
+      "WE-1",
+      "tt1375666",
+      "7",
+      false
+    );
+
+    MovieResponseDto movieDto = validMovieResponseDto();
+    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbId())).thenReturn(movieDto);
+
+    UpdateWatchlistEntryRequestDto request =
+      new UpdateWatchlistEntryRequestDto("9", true);
+
+    WatchlistEntry expected = existing
+      .withUserRating(request.userRating())
+      .withWatched(request.watched());
+
+    when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(existing));
+
+    WatchlistEntryDto result = watchlistEntryService.updateEntry("WE-1", request);
+
+    verify(watchlistEntryRepo).findById("WE-1");
+    verify(watchlistEntryRepo).save(expected);
+    verifyNoMoreInteractions(watchlistEntryRepo);
+
+    assertEquals(expected.id(), result.id());
+    assertEquals(expected.imdbId(), result.imdbId());
+    assertEquals(expected.userRating(), result.userRating());
+    assertEquals(expected.watched(), result.watched());
+  }
+
+  @Test
+  void updateEntry_keepsUserRating_whenUserRatingIsNull() {
+    WatchlistEntry existing = new WatchlistEntry(
+      "WE-1",
+      "tt1375666",
+      "7",
+      false
+    );
+
+    MovieResponseDto movieDto = validMovieResponseDto();
+    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbId())).thenReturn(movieDto);
+
+    UpdateWatchlistEntryRequestDto request =
+      new UpdateWatchlistEntryRequestDto(null, true);
+
+    WatchlistEntry expected = existing
+      .withWatched(request.watched());
+
+    when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(existing));
+
+    WatchlistEntryDto result = watchlistEntryService.updateEntry("WE-1", request);
+
+    verify(watchlistEntryRepo).findById("WE-1");
+    verify(watchlistEntryRepo).save(expected);
+    verifyNoMoreInteractions(watchlistEntryRepo);
+
+    assertEquals(expected.id(), result.id());
+    assertEquals(expected.imdbId(), result.imdbId());
+    assertEquals(expected.userRating(), result.userRating());
+    assertEquals(expected.watched(), result.watched());
+  }
+
+  @Test
+  void updateEntry_keepsWatched_whenWatchedIsNull() {
+    WatchlistEntry existing = new WatchlistEntry(
+      "WE-1",
+      "tt1375666",
+      "7",
+      false
+    );
+
+    MovieResponseDto movieDto = validMovieResponseDto();
+    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbId())).thenReturn(movieDto);
+
+    UpdateWatchlistEntryRequestDto request =
+      new UpdateWatchlistEntryRequestDto("8", null);
+
+    WatchlistEntry expected = existing
+      .withUserRating(request.userRating());
+
+    when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(existing));
+
+    WatchlistEntryDto result = watchlistEntryService.updateEntry("WE-1", request);
+
+    verify(watchlistEntryRepo).findById("WE-1");
+    verify(watchlistEntryRepo).save(expected);
+    verifyNoMoreInteractions(watchlistEntryRepo);
+
+    assertEquals(expected.id(), result.id());
+    assertEquals(expected.imdbId(), result.imdbId());
+    assertEquals(expected.userRating(), result.userRating());
+    assertEquals(expected.watched(), result.watched());
+  }
+
+  @Test
+  void updateEntry_throwsWatchlistEntryNotFoundException_whenEntryDoesNotExist() {
+    when(watchlistEntryRepo.findById("WE-404")).thenReturn(Optional.empty());
+
+    assertThrows(
+      WatchlistEntryNotFoundException.class,
+      () -> watchlistEntryService.updateEntry(
+        "WE-404",
+        new UpdateWatchlistEntryRequestDto("9", true)
+      )
+    );
+
+    verify(watchlistEntryRepo).findById("WE-404");
+    verifyNoMoreInteractions(watchlistEntryRepo);
   }
 }

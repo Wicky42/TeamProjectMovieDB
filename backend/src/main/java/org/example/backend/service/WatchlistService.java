@@ -77,4 +77,13 @@ public class WatchlistService {
     WatchlistEntryDto entryDto = watchlistEntryService.toWatchlistEntryDto(entry);
     return entryDto;
   }
+
+  public void removeEntry(String watchlistId, String entryId) {
+    Watchlist watchlist = watchlistRepo.findById(watchlistId)
+      .orElseThrow(() -> new WatchlistNotFoundException(watchlistId));
+
+    List<String> updatedEntryIds = new ArrayList<>(watchlist.watchlistEntryIds());
+    updatedEntryIds.remove(entryId);
+    watchlistRepo.save(watchlist.withWatchlistEntryIds(updatedEntryIds));
+  }
 }

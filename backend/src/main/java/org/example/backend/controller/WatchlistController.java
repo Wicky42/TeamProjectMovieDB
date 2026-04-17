@@ -12,11 +12,11 @@ import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.dto.WatchlistResponseDto;
 import org.example.backend.service.WatchlistService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 
 @RestController
 @RequestMapping("/api/watchlists")
@@ -52,5 +52,14 @@ class WatchlistController {
     @RequestBody ImdbIdRequestDto entry
   ) {
     return watchlistService.addEntry(watchlistId, entry.imdbID());
+  }
+
+  @DeleteMapping("/{watchlistId}/entries/{entryId}")
+  public ResponseEntity<Void> removeEntry(
+    @PathVariable String watchlistId,
+    @PathVariable String entryId
+  ) {
+    watchlistService.removeEntry(watchlistId, entryId);
+    return ResponseEntity.noContent().build();
   }
 }
