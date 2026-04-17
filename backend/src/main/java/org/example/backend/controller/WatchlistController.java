@@ -43,6 +43,12 @@ class WatchlistController {
       .orElse(ResponseEntity.badRequest().build());
   }
 
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteWatchlist(@PathVariable String id) {
+    watchlistService.deleteWatchlist(id);
+    return ResponseEntity.noContent().build();
+  }
+
   @PostMapping("/{watchlistId}/entries")
   public WatchlistEntryDto addEntry(
     @PathVariable String watchlistId,

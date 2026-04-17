@@ -179,7 +179,31 @@ class WatchlistServiceTest {
     verifyNoMoreInteractions(idService, watchlistRepo);
   }
 
- @Test
+  @Test
+  void deleteWatchlist_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
+
+    assertThrows(
+      WatchlistNotFoundException.class,
+      () -> watchlistService.deleteWatchlist("W-1")
+    );
+
+    verify(watchlistRepo).findById("W-1");
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void deleteWatchlist_deletesWatchlistSuccessfully() {
+    Watchlist watchlist = validWatchlist();
+
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.of(watchlist));
+    watchlistService.deleteWatchlist("W-1");
+    verify(watchlistRepo).findById("W-1");
+    verify(watchlistRepo).delete(watchlist);
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
   void addEntry_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
     when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
 
