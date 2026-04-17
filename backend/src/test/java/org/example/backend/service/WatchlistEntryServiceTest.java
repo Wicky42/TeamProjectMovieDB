@@ -120,7 +120,7 @@ class WatchlistEntryServiceTest {
     );
 
     MovieResponseDto movieDto = validMovieResponseDto();
-    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbId())).thenReturn(movieDto);
+    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbID())).thenReturn(movieDto);
 
     UpdateWatchlistEntryRequestDto request =
       new UpdateWatchlistEntryRequestDto("9", true);
@@ -138,7 +138,7 @@ class WatchlistEntryServiceTest {
     verifyNoMoreInteractions(watchlistEntryRepo);
 
     assertEquals(expected.id(), result.id());
-    assertEquals(expected.imdbId(), result.imdbId());
+    assertEquals(expected.imdbID(), result.imdbID());
     assertEquals(expected.userRating(), result.userRating());
     assertEquals(expected.watched(), result.watched());
   }
@@ -153,7 +153,7 @@ class WatchlistEntryServiceTest {
     );
 
     MovieResponseDto movieDto = validMovieResponseDto();
-    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbId())).thenReturn(movieDto);
+    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbID())).thenReturn(movieDto);
 
     UpdateWatchlistEntryRequestDto request =
       new UpdateWatchlistEntryRequestDto(null, true);
@@ -170,7 +170,7 @@ class WatchlistEntryServiceTest {
     verifyNoMoreInteractions(watchlistEntryRepo);
 
     assertEquals(expected.id(), result.id());
-    assertEquals(expected.imdbId(), result.imdbId());
+    assertEquals(expected.imdbID(), result.imdbID());
     assertEquals(expected.userRating(), result.userRating());
     assertEquals(expected.watched(), result.watched());
   }
@@ -185,7 +185,7 @@ class WatchlistEntryServiceTest {
     );
 
     MovieResponseDto movieDto = validMovieResponseDto();
-    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbId())).thenReturn(movieDto);
+    when(movieService.createMovieResponseDtoFromImdbId(existing.imdbID())).thenReturn(movieDto);
 
     UpdateWatchlistEntryRequestDto request =
       new UpdateWatchlistEntryRequestDto("8", null);
@@ -202,7 +202,7 @@ class WatchlistEntryServiceTest {
     verifyNoMoreInteractions(watchlistEntryRepo);
 
     assertEquals(expected.id(), result.id());
-    assertEquals(expected.imdbId(), result.imdbId());
+    assertEquals(expected.imdbID(), result.imdbID());
     assertEquals(expected.userRating(), result.userRating());
     assertEquals(expected.watched(), result.watched());
   }

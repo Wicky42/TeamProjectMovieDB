@@ -59,7 +59,7 @@ public class WatchlistEntryService {
 
     WatchlistEntry updated = new WatchlistEntry(
       entry.id(),
-      entry.imdbId(),
+      entry.imdbID(),
       requestData.userRating() != null ? requestData.userRating() : entry.userRating(),
       requestData.watched() != null ? requestData.watched() : entry.watched()
     );
