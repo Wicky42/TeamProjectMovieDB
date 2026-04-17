@@ -210,4 +210,42 @@ class WatchlistServiceTest {
     verify(watchlistEntryService).toWatchlistEntryDto(entry);
     verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
   }
+
+ @Test
+  void removeEntry_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
+
+    assertThrows(
+      WatchlistNotFoundException.class,
+      () -> watchlistService.removeEntry("W-1", "WE-1")
+    );
+
+    verify(watchlistRepo).findById("W-1");
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void removeEntry_removesEntrySuccessfully() {
+    Watchlist watchlist = new Watchlist(
+      "W-1",
+      "My Watchlist",
+      List.of("WE-1"),
+      "My description"
+    );
+
+    Watchlist expected = new Watchlist(
+      "W-1",
+      "My Watchlist",
+      List.of(),
+      "My description"
+    );
+
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.of(watchlist));
+
+    watchlistService.removeEntry("W-1", "WE-1");
+
+    verify(watchlistRepo).findById("W-1");
+    verify(watchlistRepo).save(expected);
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
 }
