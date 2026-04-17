@@ -32,31 +32,93 @@ class WatchlistServiceTest {
 
   private Watchlist validWatchlist() {
     return new Watchlist(
-      "1",
+      "W-1",
       "Some name",
-      List.of("WE-1", "WE2-2"),
+      List.of("WE-1", "WE-2"),
+      "Some description"
+    );
+  }
+
+  private WatchlistEntryDto validWatchlistEntryDto() {
+    return new WatchlistEntryDto(
+      "WE-1",
+      "tt1375666",
+      "",
+      false,
+      "Inception",
+      "poster-url",
+      "2010",
+      "movie",
+      "Sci-Fi",
+      "74",
+      "8.8",
+      "Plot"
+    );
+  }
+
+  private WatchlistResponseDto validWatchlistResponseDto() {
+    return new WatchlistResponseDto(
+      "W-1",
+      "Some name",
+      List.of(validWatchlistEntryDto()),
       "Some description"
     );
   }
 
   @Test
   void findAll_returnsRepoFindAll_whenCalled() {
-    Watchlist watchlist = validWatchlist();
-    when(watchlistRepo.findAll()).thenReturn(List.of(watchlist));
+    Watchlist w1 = validWatchlist()
+    .withWatchlistEntryIds(List.of("WE-1"));
+    Watchlist w2 = validWatchlist()
+    .withId("W-2")
+    .withWatchlistEntryIds(List.of("WE-2"));
 
-    assertEquals(List.of(watchlist), watchlistService.findAll());
+    WatchlistEntryDto we1 = validWatchlistEntryDto().withId("WE-1");
+    WatchlistEntryDto we2 = validWatchlistEntryDto().withId("WE-2");
+
+    WatchlistResponseDto wr1 = validWatchlistResponseDto()
+      .withEntries(List.of(we1));
+    WatchlistResponseDto wr2 = validWatchlistResponseDto()
+      .withId("W-2")
+      .withEntries(List.of(we2));
+
+    when(watchlistRepo.findAll()).thenReturn(List.of(w1, w2));
+    when(watchlistEntryService.createWatchListEntryDtoList(List.of("WE-1")))
+      .thenReturn(List.of(we1));
+    when(watchlistEntryService.createWatchListEntryDtoList(List.of("WE-2")))
+      .thenReturn(List.of(we2));
+
+    assertEquals(List.of(wr1, wr2), watchlistService.findAll());
+
     verify(watchlistRepo).findAll();
+    verify(watchlistEntryService).createWatchListEntryDtoList(List.of("WE-1"));
+    verify(watchlistEntryService).createWatchListEntryDtoList(List.of("WE-2"));
+    verifyNoMoreInteractions(watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void findById_returnsWatchlistResponseDto_whenCalledWithValidId() {
+    Watchlist watchlist = validWatchlist();
+    WatchlistResponseDto watchlistResponse = validWatchlistResponseDto();
+    when(watchlistRepo.findById(watchlist.id())).thenReturn(Optional.ofNullable(watchlist));
+    when(watchlistEntryService.createWatchListEntryDtoList(watchlist.watchlistEntryIds())).thenReturn(List.of(validWatchlistEntryDto()));
+
+    assertEquals(watchlistResponse, watchlistService.findById(watchlist.id()));
+    verify(watchlistRepo).findById(watchlist.id());
     verifyNoMoreInteractions(watchlistRepo);
   }
 
   @Test
-  void findById_returnsRepoFindById_whenCalled() {
-    Watchlist watchlist = validWatchlist();
-    when(watchlistRepo.findById(watchlist.id())).thenReturn(Optional.ofNullable(watchlist));
+  void findById_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
 
-    assertEquals(Optional.ofNullable(watchlist), watchlistService.findById(watchlist.id()));
-    verify(watchlistRepo).findById(watchlist.id());
-    verifyNoMoreInteractions(watchlistRepo);
+    assertThrows(
+      WatchlistNotFoundException.class,
+      () -> watchlistService.findById("W-1")
+    );
+
+    verify(watchlistRepo).findById("W-1");
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
   }
 
   @Test

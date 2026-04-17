@@ -1,5 +1,8 @@
 package org.example.backend.dto;
 
+import lombok.With;
+
+@With
 public record WatchlistEntryDto(
   String id,
   String imdbId,

@@ -3,9 +3,11 @@ package org.example.backend.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.example.backend.domain.WatchlistEntry;
@@ -45,6 +47,23 @@ class WatchlistEntryServiceTest {
       "2010",
       "movie",
       "tt1375666",
+      "Sci-Fi",
+      "74",
+      "8.8",
+      "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea."
+    );
+  }
+
+  private WatchlistEntryDto validWatchlistEntryDto() {
+    return new WatchlistEntryDto(
+      "WE-1",
+      "tt1375666",
+      "8",
+      true,
+      "Inception",
+      "poster-url",
+      "2010",
+      "movie",
       "Sci-Fi",
       "74",
       "8.8",
@@ -221,5 +240,59 @@ class WatchlistEntryServiceTest {
 
     verify(watchlistEntryRepo).findById("WE-404");
     verifyNoMoreInteractions(watchlistEntryRepo);
+  }
+
+  @Test
+  void createWatchListEntryDtoList_returnsMappedDtos_whenAllIdsExist() {
+    WatchlistEntry e1 = validWatchlistEntry().withId("WE-1");
+    WatchlistEntry e2 = validWatchlistEntry().withId("WE-2");
+
+    WatchlistEntryDto d1 = validWatchlistEntryDto().withId("WE-1");
+    WatchlistEntryDto d2 = validWatchlistEntryDto().withId("WE-2");
+
+    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbId()))
+      .thenReturn(validMovieResponseDto());
+    when(movieService.createMovieResponseDtoFromImdbId(e2.imdbId()))
+      .thenReturn(validMovieResponseDto());
+    when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(e1));
+    when(watchlistEntryRepo.findById("WE-2")).thenReturn(Optional.of(e2));
+
+    List<WatchlistEntryDto> result =
+        watchlistEntryService.createWatchListEntryDtoList(List.of("WE-1", "WE-2"));
+
+    assertEquals(List.of(d1, d2), result);
+
+    verify(watchlistEntryRepo).findById("WE-1");
+    verify(watchlistEntryRepo).findById("WE-2");
+    verifyNoMoreInteractions(watchlistEntryRepo);
+  }
+
+  @Test
+  void createWatchListEntryDtoList_throws_whenAnyIdDoesNotExist() {
+    WatchlistEntry e1 = validWatchlistEntry().withId("WE-1");
+
+    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbId()))
+      .thenReturn(validMovieResponseDto());
+    when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(e1));
+    when(watchlistEntryRepo.findById("WE-2")).thenReturn(Optional.empty());
+
+    WatchlistEntryNotFoundException ex = assertThrows(
+        WatchlistEntryNotFoundException.class,
+        () -> watchlistEntryService.createWatchListEntryDtoList(List.of("WE-1", "WE-2"))
+    );
+
+    assertEquals("WatchlistEntry with id WE-2 not found.", ex.getMessage());
+    verify(watchlistEntryRepo).findById("WE-1");
+    verify(watchlistEntryRepo).findById("WE-2");
+    verifyNoMoreInteractions(watchlistEntryRepo);
+  }
+
+  @Test
+  void createWatchListEntryDtoList_returnsEmptyList_whenInputIsEmpty() {
+      List<WatchlistEntryDto> result =
+          watchlistEntryService.createWatchListEntryDtoList(List.of());
+
+      assertEquals(List.of(), result);
+      verifyNoInteractions(watchlistEntryRepo);
   }
 }
