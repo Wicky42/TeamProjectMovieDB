@@ -33,10 +33,8 @@ class WatchlistController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Watchlist> findById(@PathVariable String id) {
-    return watchlistService.findById(id)
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+  public ResponseEntity<WatchlistResponseDto> findById(@PathVariable String id) {
+    return ResponseEntity.ok(watchlistService.findById(id));
   }
 
   @PostMapping()

@@ -33,8 +33,11 @@ public class WatchlistService {
     return watchlistRepo.findAll();
   }
 
-  public Optional<Watchlist> findById(String id) {
-    return watchlistRepo.findById(id);
+  public WatchlistResponseDto findById(String id) {
+    Watchlist watchlist = watchlistRepo.findById(id)
+      .orElseThrow(() -> new WatchlistNotFoundException(id));
+
+    return toWatchlistResponseDto(watchlist);
   }
 
   public Optional<WatchlistResponseDto> createWatchlist(String description, String name) {
@@ -85,5 +88,16 @@ public class WatchlistService {
     List<String> updatedEntryIds = new ArrayList<>(watchlist.watchlistEntryIds());
     updatedEntryIds.remove(entryId);
     watchlistRepo.save(watchlist.withWatchlistEntryIds(updatedEntryIds));
+  }
+
+  private WatchlistResponseDto toWatchlistResponseDto(Watchlist watchlist) {
+    List<WatchlistEntryDto> entryDtos = watchlistEntryService.createWatchListEntryDtoList(watchlist.watchlistEntryIds());
+
+    return new WatchlistResponseDto(
+      watchlist.id(),
+      watchlist.name(),
+      entryDtos,
+      watchlist.description()
+    );
   }
 }
