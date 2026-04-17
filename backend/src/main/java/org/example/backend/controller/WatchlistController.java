@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import org.example.backend.dto.ImdbIdRequestDto;
+import org.example.backend.dto.UpdateWatchlistRequestDto;
 import org.example.backend.dto.CreateWatchlistRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.dto.WatchlistResponseDto;
@@ -13,6 +14,7 @@ import org.example.backend.service.WatchlistService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +49,14 @@ class WatchlistController {
   public ResponseEntity<Void> deleteWatchlist(@PathVariable String id) {
     watchlistService.deleteWatchlist(id);
     return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/{id}")
+  public ResponseEntity<WatchlistResponseDto> updateWatchlist(
+    @PathVariable String id,
+    @RequestBody UpdateWatchlistRequestDto requestData
+  ) {
+    return ResponseEntity.ok(watchlistService.updateWatchlist(id, requestData.description(), requestData.name()));
   }
 
   @PostMapping("/{watchlistId}/entries")

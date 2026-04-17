@@ -86,6 +86,21 @@ public class WatchlistService {
     watchlistRepo.delete(watchlist);
   }
 
+  public WatchlistResponseDto updateWatchlist(String id, String description, String name) {
+    Watchlist watchlist = watchlistRepo.findById(id)
+      .orElseThrow(() -> new WatchlistNotFoundException(id));
+
+    Watchlist updated = new Watchlist(
+      watchlist.id(),
+      name != null ? name : watchlist.name(),
+      watchlist.watchlistEntryIds(),
+      description != null ? description : watchlist.description()
+    );
+    watchlistRepo.save(updated);
+
+    return toWatchlistResponseDto(updated);
+  }
+
   public WatchlistEntryDto addEntry(String watchlistId, String imdbId) {
     Watchlist watchlist = watchlistRepo.findById(watchlistId)
       .orElseThrow(() -> new WatchlistNotFoundException(watchlistId));
