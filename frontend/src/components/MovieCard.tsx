@@ -132,10 +132,13 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 className="watchlist-modal__backdrop"
                 onClick={() => setIsModalOpen(false)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === "Escape" || e.key === " ") {
+                  if (e.key === "Escape") {
                     setIsModalOpen(false);
                   }
                 }}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Select a Watchlist"
             >
               <div
                   className="watchlist-modal"

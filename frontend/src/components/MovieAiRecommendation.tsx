@@ -46,6 +46,7 @@ const MovieAiRecommendation: React.FC = () => {
   return (
     <>
       <MovieSearchInput
+        id="ai-movie-search"
         label="Don't know what to watch? Tell us what you'd like and we recommend a single film or series"
         placeholder="Describe what you'd like to watch..."
         setSearchInput={setSearchInput}

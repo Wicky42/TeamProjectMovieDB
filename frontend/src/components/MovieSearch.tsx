@@ -40,6 +40,7 @@ const MovieSearch: React.FC = () => {
   return (
     <>
       <MovieSearchInput
+        id="movie-search"
         label="Search for a specific movie or series"
         placeholder="Search for a movie or series..."
         setSearchInput={setSearchInput}
