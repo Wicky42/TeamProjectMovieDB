@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { WatchlistResponse } from "../types/Watchlist";
 import "./WatchlistDetailPage.css";
 
 export default function WatchlistDetailPage() {
     const { watchlistId } = useParams();
+    const navigate = useNavigate();
 
     const [watchlist, setWatchlist] = useState<WatchlistResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [deleteError, setDeleteError] = useState("");
     const [deletingEntryId, setDeletingEntryId] = useState<string | null>(null);
+    const [isDeletingWatchlist, setIsDeletingWatchlist] = useState(false);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
     useEffect(() => {
         const fetchWatchlist = async () => {
@@ -82,6 +85,50 @@ export default function WatchlistDetailPage() {
         }
     };
 
+    const handleDeleteWatchlist = async () => {
+        if (!watchlistId) {
+            setDeleteError("No watchlist id provided.");
+            return;
+        }
+
+        setIsDeleteConfirmOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!watchlistId) {
+            setDeleteError("No watchlist id provided.");
+            return;
+        }
+
+        setIsDeleteConfirmOpen(false);
+
+        try {
+            setIsDeletingWatchlist(true);
+            setDeleteError("");
+
+            const response = await fetch(`/api/watchlists/${watchlistId}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                const body = await response.text();
+                setDeleteError(body || "Watchlist could not be deleted.");
+                return;
+            }
+
+            navigate("/watchlists");
+        } catch (err) {
+            console.error(err);
+            setDeleteError("Watchlist could not be deleted.");
+        } finally {
+            setIsDeletingWatchlist(false);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setIsDeleteConfirmOpen(false);
+    };
+
     if (isLoading) {
         return <p className="watchlist-detail-page__state">Loading watchlist...</p>;
     }
@@ -99,9 +146,21 @@ export default function WatchlistDetailPage() {
     }
 
     return (
+        <>
         <section className="watchlist-detail-page">
             <header className="watchlist-detail-page__header">
-                <h1 className="watchlist-detail-page__title">{watchlist.name}</h1>
+                <div className="watchlist-detail-page__title-wrapper">
+                    <h1 className="watchlist-detail-page__title">{watchlist.name}</h1>
+                    <button
+                        type="button"
+                        className="watchlist-detail-page__delete-button"
+                        onClick={handleDeleteWatchlist}
+                        disabled={isDeletingWatchlist}
+                        title="Delete this watchlist"
+                    >
+                        {isDeletingWatchlist ? "Deleting..." : "Delete Watchlist"}
+                    </button>
+                </div>
                 <p className="watchlist-detail-page__description">
                     {watchlist.description || "No description available."}
                 </p>
@@ -165,5 +224,39 @@ export default function WatchlistDetailPage() {
                 </div>
             )}
         </section>
+
+        {isDeleteConfirmOpen && (
+            <div className="watchlist-delete-modal__backdrop" onClick={handleCancelDelete}>
+                <div
+                    className="watchlist-delete-modal"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <h2 className="watchlist-delete-modal__title">Delete Watchlist</h2>
+                    <p className="watchlist-delete-modal__message">
+                        Are you sure you want to permanently delete this watchlist? This cannot be undone.
+                    </p>
+
+                    <div className="watchlist-delete-modal__actions">
+                        <button
+                            type="button"
+                            className="watchlist-delete-modal__cancel-button"
+                            onClick={handleCancelDelete}
+                            disabled={isDeletingWatchlist}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            className="watchlist-delete-modal__delete-button"
+                            onClick={handleConfirmDelete}
+                            disabled={isDeletingWatchlist}
+                        >
+                            {isDeletingWatchlist ? "Deleting..." : "Delete"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+    </>
     );
 }

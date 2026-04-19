@@ -7,10 +7,43 @@
     margin-bottom: 2rem;
 }
 
+.watchlist-detail-page__title-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 .watchlist-detail-page__title {
     margin: 0 0 0.5rem;
     font-size: 2rem;
     font-weight: 700;
+    flex: 1;
+}
+
+.watchlist-detail-page__delete-button {
+    border: 1px solid rgba(248, 113, 113, 0.35);
+    background: rgba(127, 29, 29, 0.2);
+    color: #fecaca;
+    border-radius: 999px;
+    padding: 0.65rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.watchlist-detail-page__delete-button:hover:not(:disabled) {
+    background: rgba(185, 28, 28, 0.28);
+    border-color: rgba(248, 113, 113, 0.55);
+}
+
+.watchlist-detail-page__delete-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
 
 .watchlist-detail-page__description {
@@ -142,4 +175,83 @@
 .watchlist-entry-card__user-rating {
     font-size: 0.9rem;
     color: #dbe7ff;
+}
+
+.watchlist-delete-modal__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 1rem;
+}
+
+.watchlist-delete-modal {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 18px;
+    padding: 1.75rem;
+    background: linear-gradient(180deg, #10182a, #152040);
+    border: 1px solid rgba(77, 175, 255, 0.2);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    color: white;
+}
+
+.watchlist-delete-modal__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fecaca;
+}
+
+.watchlist-delete-modal__message {
+    margin: 0 0 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.watchlist-delete-modal__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.watchlist-delete-modal__cancel-button,
+.watchlist-delete-modal__delete-button {
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.watchlist-delete-modal__cancel-button {
+    background: rgba(77, 175, 255, 0.12);
+    color: #8ecbff;
+    border: 1px solid rgba(77, 175, 255, 0.25);
+}
+
+.watchlist-delete-modal__cancel-button:hover:not(:disabled) {
+    background: rgba(77, 175, 255, 0.18);
+}
+
+.watchlist-delete-modal__delete-button {
+    background: rgba(248, 113, 113, 0.18);
+    color: #fecaca;
+    border: 1px solid rgba(248, 113, 113, 0.35);
+}
+
+.watchlist-delete-modal__delete-button:hover:not(:disabled) {
+    background: rgba(248, 113, 113, 0.28);
+}
+
+.watchlist-delete-modal__cancel-button:disabled,
+.watchlist-delete-modal__delete-button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
 }
