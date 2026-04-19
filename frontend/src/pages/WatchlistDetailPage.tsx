@@ -230,6 +230,13 @@ export default function WatchlistDetailPage() {
                 <div
                     className="watchlist-delete-modal"
                     onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " " || e.key === "Escape") {
+                            handleCancelDelete();
+                        }
+                    }}
+                    role="button"
+                    tabIndex={0}
                 >
                     <h2 className="watchlist-delete-modal__title">Delete Watchlist</h2>
                     <p className="watchlist-delete-modal__message">
