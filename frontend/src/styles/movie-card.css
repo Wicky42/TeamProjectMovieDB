@@ -188,3 +188,26 @@
   font-size: 0.85rem;
   color: #a9cfff;
 }
+
+.watchlist-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watchlist-modal__backdrop-button {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.watchlist-modal {
+  position: relative;
+  z-index: 1;
+}

@@ -32,6 +32,19 @@ const MovieCard: React.FC<MovieCardProps> = ({
   useEffect(() => {
     if (!isModalOpen) return;
 
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsModalOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    if (!isModalOpen) return;
+
     const fetchWatchlists = async () => {
       try {
         setIsLoadingWatchlists(true);
@@ -45,7 +58,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
         }
 
         const data = await response.json();
-
         setWatchlists(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error(err);
@@ -128,21 +140,19 @@ const MovieCard: React.FC<MovieCardProps> = ({
         </article>
 
         {isModalOpen && (
-            <div
-                className="watchlist-modal__backdrop"
-                onClick={() => setIsModalOpen(false)}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") {
-                    setIsModalOpen(false);
-                  }
-                }}
-                role="dialog"
-                aria-modal="true"
-                aria-label="Select a Watchlist"
-            >
+            <div className="watchlist-modal__backdrop">
+              <button
+                  type="button"
+                  className="watchlist-modal__backdrop-button"
+                  aria-label="Close modal"
+                  onClick={() => setIsModalOpen(false)}
+              />
+
               <div
                   className="watchlist-modal"
-                  onClick={(event) => event.stopPropagation()}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Select a Watchlist"
               >
                 <div className="watchlist-modal__header">
                   <h3>Select a Watchlist</h3>
@@ -194,4 +204,3 @@ const MovieCard: React.FC<MovieCardProps> = ({
 };
 
 export default MovieCard;
-

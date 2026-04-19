@@ -23,9 +23,9 @@
 }
 
 .watchlist-detail-page__delete-button {
-    border: 1px solid rgba(248, 113, 113, 0.35);
-    background: rgba(127, 29, 29, 0.2);
-    color: #fecaca;
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    background: rgba(127, 29, 29, 0.55);
+    color: #ffffff;
     border-radius: 999px;
     padding: 0.65rem 1.1rem;
     font-size: 0.9rem;
@@ -37,8 +37,8 @@
 }
 
 .watchlist-detail-page__delete-button:hover:not(:disabled) {
-    background: rgba(185, 28, 28, 0.28);
-    border-color: rgba(248, 113, 113, 0.55);
+    background: rgba(185, 28, 28, 0.7);
+    border-color: rgba(248, 113, 113, 0.65);
 }
 
 .watchlist-detail-page__delete-button:disabled {
@@ -48,12 +48,12 @@
 
 .watchlist-detail-page__description {
     margin: 0 0 0.5rem;
-    color: rgba(255, 255, 255, 0.78);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .watchlist-detail-page__count {
     margin: 0;
-    color: #8ecbff;
+    color: #c7e3ff;
     font-size: 0.95rem;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .watchlist-detail-page__state--error {
-    color: #fca5a5;
+    color: #ffd4d4;
 }
 
 .watchlist-detail-grid {
@@ -77,8 +77,8 @@
     gap: 1rem;
     padding: 1rem;
     border-radius: 18px;
-    background: linear-gradient(180deg, rgba(16, 24, 42, 0.95), rgba(21, 32, 64, 0.9));
-    border: 1px solid rgba(77, 175, 255, 0.18);
+    background: linear-gradient(180deg, rgba(16, 24, 42, 0.98), rgba(21, 32, 64, 0.96));
+    border: 1px solid rgba(77, 175, 255, 0.22);
 }
 
 .watchlist-entry-card__poster {
@@ -86,7 +86,7 @@
     height: 210px;
     object-fit: cover;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .watchlist-entry-card__content {
@@ -114,14 +114,14 @@
 }
 
 .watchlist-entry-card__year {
-    color: #a9cfff;
+    color: #d6e8ff;
     white-space: nowrap;
 }
 
 .watchlist-entry-card__delete-button {
-    border: 1px solid rgba(248, 113, 113, 0.35);
-    background: rgba(127, 29, 29, 0.2);
-    color: #fecaca;
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    background: rgba(127, 29, 29, 0.55);
+    color: #ffffff;
     border-radius: 999px;
     padding: 0.55rem 0.9rem;
     font-size: 0.85rem;
@@ -131,8 +131,8 @@
 }
 
 .watchlist-entry-card__delete-button:hover:not(:disabled) {
-    background: rgba(185, 28, 28, 0.28);
-    border-color: rgba(248, 113, 113, 0.55);
+    background: rgba(185, 28, 28, 0.7);
+    border-color: rgba(248, 113, 113, 0.65);
 }
 
 .watchlist-entry-card__delete-button:disabled {
@@ -144,7 +144,7 @@
 .watchlist-entry-card__genre,
 .watchlist-entry-card__plot {
     margin: 0;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .watchlist-entry-card__status-row {
@@ -163,18 +163,18 @@
 }
 
 .watchlist-entry-card__status--watched {
-    background: rgba(34, 197, 94, 0.18);
-    color: #86efac;
+    background: rgba(21, 128, 61, 0.7);
+    color: #ffffff;
 }
 
 .watchlist-entry-card__status--open {
-    background: rgba(77, 175, 255, 0.14);
-    color: #8ecbff;
+    background: rgba(29, 78, 216, 0.65);
+    color: #ffffff;
 }
 
 .watchlist-entry-card__user-rating {
     font-size: 0.9rem;
-    color: #dbe7ff;
+    color: #eef4ff;
 }
 
 .watchlist-delete-modal__backdrop {
@@ -203,14 +203,14 @@
     margin: 0 0 0.75rem;
     font-size: 1.3rem;
     font-weight: 700;
-    color: #fecaca;
+    color: #ffd4d4;
 }
 
 .watchlist-delete-modal__message {
     margin: 0 0 1.5rem;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.92);
 }
 
 .watchlist-delete-modal__actions {
@@ -231,23 +231,23 @@
 }
 
 .watchlist-delete-modal__cancel-button {
-    background: rgba(77, 175, 255, 0.12);
-    color: #8ecbff;
-    border: 1px solid rgba(77, 175, 255, 0.25);
+    background: rgba(29, 78, 216, 0.65);
+    color: #ffffff;
+    border: 1px solid rgba(147, 197, 253, 0.45);
 }
 
 .watchlist-delete-modal__cancel-button:hover:not(:disabled) {
-    background: rgba(77, 175, 255, 0.18);
+    background: rgba(37, 99, 235, 0.78);
 }
 
 .watchlist-delete-modal__delete-button {
-    background: rgba(248, 113, 113, 0.18);
-    color: #fecaca;
-    border: 1px solid rgba(248, 113, 113, 0.35);
+    background: rgba(127, 29, 29, 0.72);
+    color: #ffffff;
+    border: 1px solid rgba(248, 113, 113, 0.5);
 }
 
 .watchlist-delete-modal__delete-button:hover:not(:disabled) {
-    background: rgba(248, 113, 113, 0.28);
+    background: rgba(185, 28, 28, 0.82);
 }
 
 .watchlist-delete-modal__cancel-button:disabled,
