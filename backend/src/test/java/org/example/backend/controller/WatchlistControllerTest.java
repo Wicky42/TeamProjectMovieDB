@@ -159,6 +159,23 @@ class WatchlistControllerTest {
   }
 
   @Test
+  void deleteWatchlist_returnsNoContent_whenWatchlistExists() throws Exception {
+    mockMvc.perform(delete("/api/watchlists/W-1"))
+      .andExpect(status().isNoContent());
+
+    verify(watchlistService).deleteWatchlist("W-1");
+  }
+
+  @Test
+  void deleteWatchlist_returnsNotFound_whenWatchlistDoesNotExist() throws Exception {
+    doThrow(new WatchlistNotFoundException("W-404"))
+      .when(watchlistService).deleteWatchlist("W-404");
+
+    mockMvc.perform(delete("/api/watchlists/W-404"))
+      .andExpect(status().isNotFound());
+  }
+
+  @Test
   void addEntry_returnsOkAndWatchlistEntryDto_whenCalledWithValidData() throws Exception {
     ImdbIdRequestDto request = new ImdbIdRequestDto("tt1375666");
 

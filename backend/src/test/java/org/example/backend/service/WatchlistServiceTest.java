@@ -179,7 +179,158 @@ class WatchlistServiceTest {
     verifyNoMoreInteractions(idService, watchlistRepo);
   }
 
- @Test
+  @Test
+  void deleteWatchlist_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
+
+    assertThrows(
+      WatchlistNotFoundException.class,
+      () -> watchlistService.deleteWatchlist("W-1")
+    );
+
+    verify(watchlistRepo).findById("W-1");
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void deleteWatchlist_deletesWatchlistSuccessfully() {
+    Watchlist watchlist = validWatchlist();
+
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.of(watchlist));
+    watchlistService.deleteWatchlist("W-1");
+    verify(watchlistRepo).findById("W-1");
+    verify(watchlistRepo).delete(watchlist);
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void updateWatchlist_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
+
+    assertThrows(
+      WatchlistNotFoundException.class,
+      () -> watchlistService.updateWatchlist("W-1", "New description", "New name")
+    );
+
+    verify(watchlistRepo).findById("W-1");
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void updateWatchlist_updatesWatchlistSuccessfully() {
+    Watchlist watchlist = validWatchlist();
+
+    Watchlist updatedWatchlist = new Watchlist(
+      watchlist.id(),
+      "New name",
+      watchlist.watchlistEntryIds(),
+      "New description"
+    );
+
+    List<WatchlistEntryDto> entryDtos = List.of();
+
+    WatchlistResponseDto expected = new WatchlistResponseDto(
+      updatedWatchlist.id(),
+      updatedWatchlist.name(),
+      entryDtos,
+      updatedWatchlist.description()
+    );
+
+    when(watchlistRepo.findById("W-1")).thenReturn(Optional.of(watchlist));
+    when(watchlistRepo.save(updatedWatchlist)).thenReturn(updatedWatchlist);
+    when(watchlistEntryService.createWatchListEntryDtoList(updatedWatchlist.watchlistEntryIds()))
+      .thenReturn(entryDtos);
+
+    WatchlistResponseDto result = watchlistService.updateWatchlist(
+      watchlist.id(),
+      updatedWatchlist.description(),
+      updatedWatchlist.name()
+    );
+
+    assertEquals(expected, result);
+
+    verify(watchlistRepo).findById("W-1");
+    verify(watchlistRepo).save(updatedWatchlist);
+    verify(watchlistEntryService)
+      .createWatchListEntryDtoList(updatedWatchlist.watchlistEntryIds());
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void updateWatchlist_keepsOldName_whenNameIsNull() {
+    Watchlist watchlist = validWatchlist();
+
+    Watchlist updatedWatchlist = new Watchlist(
+      watchlist.id(),
+      watchlist.name(),
+      watchlist.watchlistEntryIds(),
+      "New description"
+    );
+
+    WatchlistResponseDto expected = new WatchlistResponseDto(
+      updatedWatchlist.id(),
+      updatedWatchlist.name(),
+      List.of(),
+      updatedWatchlist.description()
+    );
+
+    when(watchlistRepo.findById(watchlist.id())).thenReturn(Optional.of(watchlist));
+    when(watchlistRepo.save(updatedWatchlist)).thenReturn(updatedWatchlist);
+    when(watchlistEntryService.createWatchListEntryDtoList(updatedWatchlist.watchlistEntryIds()))
+      .thenReturn(List.of());
+
+    WatchlistResponseDto result = watchlistService.updateWatchlist(
+      watchlist.id(),
+      "New description",
+      null
+    );
+
+    assertEquals(expected, result);
+    verify(watchlistRepo).findById(watchlist.id());
+    verify(watchlistRepo).save(updatedWatchlist);
+    verify(watchlistEntryService)
+      .createWatchListEntryDtoList(updatedWatchlist.watchlistEntryIds());
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
+  void updateWatchlist_keepsOldDescription_whenDescriptionIsNull() {
+    Watchlist watchlist = validWatchlist();
+
+    Watchlist updatedWatchlist = new Watchlist(
+      watchlist.id(),
+      "New name",
+      watchlist.watchlistEntryIds(),
+      watchlist.description()
+    );
+
+    WatchlistResponseDto expected = new WatchlistResponseDto(
+      updatedWatchlist.id(),
+      updatedWatchlist.name(),
+      List.of(),
+      updatedWatchlist.description()
+    );
+
+    when(watchlistRepo.findById(watchlist.id())).thenReturn(Optional.of(watchlist));
+    when(watchlistRepo.save(updatedWatchlist)).thenReturn(updatedWatchlist);
+    when(watchlistEntryService.createWatchListEntryDtoList(updatedWatchlist.watchlistEntryIds()))
+      .thenReturn(List.of());
+
+    WatchlistResponseDto result = watchlistService.updateWatchlist(
+      watchlist.id(),
+      null,
+      "New name"
+    );
+
+    assertEquals(expected, result);
+    verify(watchlistRepo).findById(watchlist.id());
+    verify(watchlistRepo).save(updatedWatchlist);
+    verify(watchlistEntryService)
+      .createWatchListEntryDtoList(updatedWatchlist.watchlistEntryIds());
+    verifyNoMoreInteractions(idService, watchlistRepo, watchlistEntryService);
+  }
+
+  @Test
   void addEntry_throwsWatchlistNotFoundException_whenWatchlistDoesNotExist() {
     when(watchlistRepo.findById("W-1")).thenReturn(Optional.empty());
 
