@@ -250,9 +250,9 @@ class WatchlistEntryServiceTest {
     WatchlistEntryDto d1 = validWatchlistEntryDto().withId("WE-1");
     WatchlistEntryDto d2 = validWatchlistEntryDto().withId("WE-2");
 
-    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbId()))
+    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbID()))
       .thenReturn(validMovieResponseDto());
-    when(movieService.createMovieResponseDtoFromImdbId(e2.imdbId()))
+    when(movieService.createMovieResponseDtoFromImdbId(e2.imdbID()))
       .thenReturn(validMovieResponseDto());
     when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(e1));
     when(watchlistEntryRepo.findById("WE-2")).thenReturn(Optional.of(e2));
@@ -271,7 +271,7 @@ class WatchlistEntryServiceTest {
   void createWatchListEntryDtoList_throws_whenAnyIdDoesNotExist() {
     WatchlistEntry e1 = validWatchlistEntry().withId("WE-1");
 
-    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbId()))
+    when(movieService.createMovieResponseDtoFromImdbId(e1.imdbID()))
       .thenReturn(validMovieResponseDto());
     when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(e1));
     when(watchlistEntryRepo.findById("WE-2")).thenReturn(Optional.empty());
@@ -294,5 +294,20 @@ class WatchlistEntryServiceTest {
 
       assertEquals(List.of(), result);
       verifyNoInteractions(watchlistEntryRepo);
+  }
+
+  @Test
+  void createWatchListEntryDtoList_returnsFallbackDto_whenMovieEnrichmentFails() {
+    WatchlistEntry entry = validWatchlistEntry().withId("WE-1");
+    when(watchlistEntryRepo.findById("WE-1")).thenReturn(Optional.of(entry));
+    when(movieService.createMovieResponseDtoFromImdbId(entry.imdbID()))
+      .thenThrow(new RuntimeException("OMDb Fehler: Incorrect IMDb ID."));
+
+    List<WatchlistEntryDto> result = watchlistEntryService.createWatchListEntryDtoList(List.of("WE-1"));
+
+    assertEquals(1, result.size());
+    assertEquals("WE-1", result.getFirst().id());
+    assertEquals("tt1375666", result.getFirst().imdbID());
+    assertEquals("Unknown title", result.getFirst().title());
   }
 }

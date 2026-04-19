@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/index.css';
-import '../styles/movie-card.css';
-
-interface Watchlist {
-  id: string;
-  name: string;
-  watchlistEntryIds: string[];
-  description: string;
-}
+import React, { useEffect, useState } from "react";
+import "../styles/index.css";
+import "../styles/movie-card.css";
+import type { WatchlistResponse } from "../types/Watchlist";
 
 interface MovieCardProps {
   imdbID: string;
@@ -29,11 +23,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
                                                plot,
                                              }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+  const [watchlists, setWatchlists] = useState<WatchlistResponse[]>([]);
   const [isLoadingWatchlists, setIsLoadingWatchlists] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     if (!isModalOpen) return;
@@ -41,19 +35,21 @@ const MovieCard: React.FC<MovieCardProps> = ({
     const fetchWatchlists = async () => {
       try {
         setIsLoadingWatchlists(true);
-        setError('');
+        setError("");
 
-        const response = await fetch('api/watchlists');
+        const response = await fetch("/api/watchlists");
 
         if (!response.ok) {
-          throw new Error('Failed to load watchlists');
+          throw new Error(`Failed to load watchlists. Status: ${response.status}`);
         }
 
-        const data: Watchlist[] = await response.json();
-        setWatchlists(data);
+        const data = await response.json();
+        console.log("Loaded watchlists:", data);
+
+        setWatchlists(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error(err);
-        setError('Could not load watchlists.');
+        setError("Could not load watchlists.");
       } finally {
         setIsLoadingWatchlists(false);
       }
@@ -63,27 +59,29 @@ const MovieCard: React.FC<MovieCardProps> = ({
   }, [isModalOpen]);
 
   const handleAddToWatchlist = async (watchlistId: string) => {
+    if (!imdbID) {
+      setError("No imdbID found for this movie.");
+      return;
+    }
+
     try {
       setIsAdding(true);
-      setError('');
-      setSuccess('');
+      setError("");
+      setSuccess("");
 
-      console.log("Sending imdbId:", imdbID);
-      const response = await fetch(
-          `api/watchlists/${watchlistId}/entries`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              imdbID,
-            }),
-          }
-      );
+      const response = await fetch(`/api/watchlists/${watchlistId}/entries`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imdbID,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to add movie to watchlist');
+        const rawError = await response.text();
+        throw new Error(rawError || "Failed to add movie to watchlist");
       }
 
       await response.json();
@@ -91,11 +89,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
       setSuccess(`"${title}" was added successfully.`);
       setTimeout(() => {
         setIsModalOpen(false);
-        setSuccess('');
+        setSuccess("");
       }, 800);
     } catch (err) {
       console.error(err);
-      setError('Could not add movie to watchlist.');
+      setError("Could not add movie to watchlist.");
     } finally {
       setIsAdding(false);
     }
@@ -114,7 +112,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
               <span className="movie-card__release-year">{year}</span>
             </div>
 
-            <div className="badge" style={{ marginTop: '.5rem' }}>
+            <div className="badge" style={{ marginTop: ".5rem" }}>
               IMDb: {imdbRating} | Metascore: {metascore}
             </div>
 
@@ -153,9 +151,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
                 )}
 
                 {error && <p className="watchlist-modal__state error">{error}</p>}
-                {success && (
-                    <p className="watchlist-modal__state success">{success}</p>
-                )}
+                {success && <p className="watchlist-modal__state success">{success}</p>}
 
                 {!isLoadingWatchlists && !error && watchlists.length === 0 && (
                     <p className="watchlist-modal__state">No watchlists available.</p>
@@ -175,7 +171,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
                         {watchlist.name}
                       </span>
                               <span className="watchlist-modal__item-count">
-                        {watchlist.watchlistEntryIds.length} entries
+                        {watchlist.entries?.length ?? 0} entries
                       </span>
                             </div>
                           </button>

@@ -41,7 +41,7 @@
 
 .create-watchlist-form__input,
 .create-watchlist-form__textarea {
-    width: 100%;
+    width: 95%;
     padding: 0.9rem 1rem;
     border: 1px solid rgba(77, 175, 255, 0.2);
     border-radius: 12px;

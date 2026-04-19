@@ -1,13 +1,13 @@
 import { useState } from "react";
 import "./CreateWatchlistPage.css";
 
-type CreateWatchlistPayload = {
+type CreateWatchlistRequest = {
     name: string;
     description: string;
 };
 
 export default function CreateWatchlistPage() {
-    const [formData, setFormData] = useState<CreateWatchlistPayload>({
+    const [formData, setFormData] = useState<CreateWatchlistRequest>({
         name: "",
         description: "",
     });
@@ -52,11 +52,10 @@ export default function CreateWatchlistPage() {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to create watchlist.");
+                throw new Error(`Failed to create watchlist. Status: ${response.status}`);
             }
 
-            const data = await response.json();
-            console.log("Created watchlist:", data);
+            await response.json();
 
             setSuccess("Watchlist created successfully.");
             setFormData({

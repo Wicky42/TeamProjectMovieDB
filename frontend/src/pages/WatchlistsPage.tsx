@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import type { WatchlistResponse } from "../types/Watchlist";
 import "./WatchlistsPage.css";
 
-type Watchlist = {
-    id: string;
-    name: string;
-    watchlistEntryIds: string[];
-    description: string;
-};
-
 export default function WatchlistsPage() {
-    const [watchlists, setWatchlists] = useState<Watchlist[]>([]);
+    const [watchlists, setWatchlists] = useState<WatchlistResponse[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -19,13 +14,14 @@ export default function WatchlistsPage() {
                 setIsLoading(true);
                 setError("");
 
-                const response = await fetch("/api/watchlists");
-
+                const response = await fetch(`/api/watchlists`);
                 if (!response.ok) {
-                    throw new Error("Failed to fetch watchlists");
+                    const body = await response.text();
+                    setError(`Could not load watchlists. ${response.status} ${response.statusText}${body ? ` - ${body}` : ""}`);
+                    return;
                 }
 
-                const data: Watchlist[] = await response.json();
+                const data: WatchlistResponse[] = await response.json();
                 setWatchlists(data);
             } catch (err) {
                 console.error(err);
@@ -40,35 +36,62 @@ export default function WatchlistsPage() {
 
     return (
         <section className="watchlists-page">
-            <div className="watchlists-page__header">
-                <h2 className="watchlists-page__title">Your Watchlists</h2>
-                <p className="watchlists-page__subtitle">
-                    Here you can find all your created watchlists.
-                </p>
-            </div>
+            <h2 className="watchlists-page__title">Your Watchlists</h2>
 
-            {isLoading && <p className="watchlists-page__state">Loading watchlists...</p>}
-            {error && <p className="watchlists-page__state watchlists-page__state--error">{error}</p>}
+            {isLoading && <p>Loading watchlists...</p>}
+            {error && <p className="watchlists-page__state--error">{error}</p>}
 
             {!isLoading && !error && watchlists.length === 0 && (
-                <p className="watchlists-page__state">No watchlists found yet.</p>
+                <p>No watchlists found yet.</p>
             )}
 
             {!isLoading && !error && watchlists.length > 0 && (
                 <div className="watchlists-grid">
                     {watchlists.map((watchlist) => (
-                        <article key={watchlist.id} className="watchlist-card">
-                            <div className="watchlist-card__top">
-                                <h3 className="watchlist-card__title">{watchlist.name}</h3>
-                                <span className="watchlist-card__count">
-                  {watchlist.watchlistEntryIds.length} movies
-                </span>
-                            </div>
+                        <Link
+                            key={watchlist.id}
+                            to={`/watchlists/${watchlist.id}`}
+                            className="watchlist-card__link"
+                        >
+                            <article className="watchlist-card">
+                                <div className="watchlist-card__top">
+                                    <h3 className="watchlist-card__title">{watchlist.name}</h3>
+                                    <span className="watchlist-card__count">
+                    {watchlist.entries?.length ?? 0} movies
+                  </span>
+                                </div>
 
-                            <p className="watchlist-card__description">
-                                {watchlist.description || "No description available."}
-                            </p>
-                        </article>
+                                <p className="watchlist-card__description">
+                                    {watchlist.description || "No description available."}
+                                </p>
+
+                                <div className="watchlist-card__preview">
+                                    {watchlist.entries.slice(0, 3).length > 0 ? (
+                                        <div className="watchlist-card__poster-list">
+                                            {watchlist.entries.slice(0, 3).map((entry) => (
+                                                <div key={entry.id} className="watchlist-card__poster-frame">
+                                                    {entry.poster && entry.poster !== "N/A" ? (
+                                                        <img
+                                                            src={entry.poster}
+                                                            alt={entry.title}
+                                                            className="watchlist-card__poster"
+                                                        />
+                                                    ) : (
+                                                        <div className="watchlist-card__poster watchlist-card__poster--fallback">
+                                                            No poster
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="watchlist-card__preview-empty">
+                                            No movie preview available yet.
+                                        </p>
+                                    )}
+                                </div>
+                            </article>
+                        </Link>
                     ))}
                 </div>
             )}

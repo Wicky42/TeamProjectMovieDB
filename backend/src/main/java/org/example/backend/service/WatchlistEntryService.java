@@ -8,10 +8,14 @@ import org.example.backend.dto.UpdateWatchlistEntryRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.exception.WatchlistEntryNotFoundException;
 import org.example.backend.repo.WatchlistEntryRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WatchlistEntryService {
+  private static final Logger LOG = LoggerFactory.getLogger(WatchlistEntryService.class);
+
   private final IdService idService;
   private final MovieService movieService;
   private final WatchlistEntryRepo watchlistEntryRepo;
@@ -73,9 +77,31 @@ public class WatchlistEntryService {
   public List<WatchlistEntryDto> createWatchListEntryDtoList(List<String> entryIds) {
     return entryIds.stream()
       .map(id -> watchlistEntryRepo.findById(id)
-        .map(this::toWatchlistEntryDto)
+        .map(this::toWatchlistEntryDtoSafely)
         .orElseThrow(() -> new WatchlistEntryNotFoundException(id))
       )
       .toList();
+  }
+
+  private WatchlistEntryDto toWatchlistEntryDtoSafely(WatchlistEntry entry) {
+    try {
+      return toWatchlistEntryDto(entry);
+    } catch (RuntimeException ex) {
+      LOG.warn("Could not enrich watchlist entry {} with IMDb ID {}. Returning fallback values.", entry.id(), entry.imdbID(), ex);
+      return new WatchlistEntryDto(
+        entry.id(),
+        entry.imdbID(),
+        entry.userRating(),
+        entry.watched(),
+        "Unknown title",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      );
+    }
   }
 }
