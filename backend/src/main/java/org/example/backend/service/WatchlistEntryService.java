@@ -78,4 +78,16 @@ public class WatchlistEntryService {
       )
       .toList();
   }
+
+  public List<WatchlistEntryDto> findEntries(Boolean watched) {
+    if (watched == null) {
+      return watchlistEntryRepo.findAll().stream()
+        .map(this::toWatchlistEntryDto)
+        .toList();
+    }
+
+    return watchlistEntryRepo.findAllByWatched(watched).stream()
+      .map(this::toWatchlistEntryDto)
+      .toList();
+  }
 }
