@@ -8,14 +8,10 @@ import org.example.backend.dto.UpdateWatchlistEntryRequestDto;
 import org.example.backend.dto.WatchlistEntryDto;
 import org.example.backend.exception.WatchlistEntryNotFoundException;
 import org.example.backend.repo.WatchlistEntryRepo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WatchlistEntryService {
-  private static final Logger LOG = LoggerFactory.getLogger(WatchlistEntryService.class);
-
   private final IdService idService;
   private final MovieService movieService;
   private final WatchlistEntryRepo watchlistEntryRepo;
@@ -87,7 +83,6 @@ public class WatchlistEntryService {
     try {
       return toWatchlistEntryDto(entry);
     } catch (RuntimeException ex) {
-      LOG.warn("Could not enrich watchlist entry {} with IMDb ID {}. Returning fallback values.", entry.id(), entry.imdbID(), ex);
       return new WatchlistEntryDto(
         entry.id(),
         entry.imdbID(),
