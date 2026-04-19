@@ -66,7 +66,7 @@ export default function WatchlistsPage() {
                                 </p>
 
                                 <div className="watchlist-card__preview">
-                                    {watchlist.entries.slice(0, 3).length > 0 ? (
+                                    {(watchlist.entries?.length ?? 0) > 0 ? (
                                         <div className="watchlist-card__poster-list">
                                             {watchlist.entries.slice(0, 3).map((entry) => (
                                                 <div key={entry.id} className="watchlist-card__poster-frame">

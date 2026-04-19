@@ -85,7 +85,7 @@ export default function WatchlistDetailPage() {
         }
     };
 
-    const handleDeleteWatchlist = async () => {
+    const handleDeleteWatchlist = () => {
         if (!watchlistId) {
             setDeleteError("No watchlist id provided.");
             return;

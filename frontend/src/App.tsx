@@ -5,9 +5,9 @@ import Footer from './components/Footer';
 import MovieSearch from './components/MovieSearch';
 import MovieAiRecommendation from './components/MovieAiRecommendation';
 import { Routes, Route } from "react-router-dom";
-import CreateWatchlistPage from "./pages/CreateWatchlistPage.tsx";
-import WatchlistsPage from "./pages/WatchlistsPage.tsx";
-import WatchlistDetailPage from "./pages/WatchlistDetailPage.tsx";
+import CreateWatchlistPage from "./pages/CreateWatchlistPage";
+import WatchlistsPage from "./pages/WatchlistsPage";
+import WatchlistDetailPage from "./pages/WatchlistDetailPage";
 
 function App() {
   return (

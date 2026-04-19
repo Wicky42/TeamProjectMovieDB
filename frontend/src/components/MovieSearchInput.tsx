@@ -12,7 +12,7 @@ const MovieSearchInput: React.FC<MovieSearchInputProps> = ({ label, placeholder,
       <label
         htmlFor="movie-search"
         style={{
-          color: 'var(--accent-strong',
+          color: 'var(--accent-strong)',
           display: 'block',
           fontSize: '18px',
           fontWeight: 'bold',

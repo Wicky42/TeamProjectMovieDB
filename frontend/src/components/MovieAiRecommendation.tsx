@@ -27,8 +27,8 @@ const MovieAiRecommendation: React.FC = () => {
           body: JSON.stringify(searchInput),
         });
         if (!response.ok) {
-          setIsLoading(false);
-          throw new Error('Failed to fetch movies');
+          setMovie(undefined);
+          return;
         }
         const data = await response.json();
         setMovie(data);

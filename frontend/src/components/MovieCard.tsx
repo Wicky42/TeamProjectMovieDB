@@ -40,11 +40,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
         const response = await fetch("/api/watchlists");
 
         if (!response.ok) {
-          throw new Error(`Failed to load watchlists. Status: ${response.status}`);
+          setError("Could not load watchlists.");
+          return;
         }
 
         const data = await response.json();
-        console.log("Loaded watchlists:", data);
 
         setWatchlists(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -80,8 +80,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
       });
 
       if (!response.ok) {
-        const rawError = await response.text();
-        throw new Error(rawError || "Failed to add movie to watchlist");
+        setError("Could not add movie to watchlist.");
+        return;
       }
 
       await response.json();
@@ -191,3 +191,4 @@ const MovieCard: React.FC<MovieCardProps> = ({
 };
 
 export default MovieCard;
+

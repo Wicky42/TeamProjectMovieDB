@@ -21,8 +21,8 @@ const MovieSearch: React.FC = () => {
         const response = await fetch(`/api/movies?title=${encodeURIComponent(searchInput)}`);
 
         if (!response.ok) {
-          setIsLoading(false);
-          throw new Error('Failed to fetch movies');
+          setMovies([]);
+          return;
         }
         const data = await response.json();
         setMovies(data);

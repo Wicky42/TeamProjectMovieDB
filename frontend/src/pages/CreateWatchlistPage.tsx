@@ -52,7 +52,8 @@ export default function CreateWatchlistPage() {
             });
 
             if (!response.ok) {
-                throw new Error(`Failed to create watchlist. Status: ${response.status}`);
+                setError("Something went wrong while creating the watchlist.");
+                return;
             }
 
             await response.json();
