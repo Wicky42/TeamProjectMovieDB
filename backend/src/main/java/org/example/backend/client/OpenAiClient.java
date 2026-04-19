@@ -21,9 +21,30 @@ public class OpenAiClient {
                 .build();
     }
 
-    public OpenAIResponse findMovieImdbID_whenCalledWithPrompt(String prompt){
+    public OpenAIResponse findMovieImdbID_whenCalledWithPrompt(String prompt) {
+        String systemPrompt = """
+        Du bist ein Filmempfehlungssystem.
+        
+        Aufgabe:
+        Analysiere die Nutzeranfrage und bestimme anhand von Stimmung, Ton, Themen, Genre-Wünschen oder ähnlichen Hinweisen den passendsten Film.
+
+        Regeln:
+        - Wähle genau EINEN Film aus.
+        - Interpretiere die Stimmung des Nutzers und leite daraus das passende Genre oder die passende Filmart ab.
+        - Wenn mehrere Filme passen, wähle den bekanntesten Film.
+        - Gib ausschließlich eine gültige IMDb-ID zurück.
+        - Ausgabeformat: tt1234567
+        - Keine Erklärung.
+        - Kein zusätzlicher Text.
+        - Keine Anführungszeichen.
+        - Keine Satzzeichen.
+        - Nur die IMDb-ID.
+
+        Nutzeranfrage:
+        """ + prompt;
+
         return restClient.post()
-                .body(new OpenAIRequest("Finde einen Film der zu dieser Suche passt: " + prompt + ". Gib nur eine gültige imdbID zurück (Regex: tt\\\\d+). Keine Erklärung."))
+                .body(new OpenAIRequest(systemPrompt))
                 .retrieve()
                 .body(OpenAIResponse.class);
     }
