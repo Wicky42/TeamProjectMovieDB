@@ -6,5 +6,5 @@ export type Movie = {
   metascore: string;
   imdbRating: string;
   plot: string;
-  imdbId: string;
+  imdbID: string;
 }

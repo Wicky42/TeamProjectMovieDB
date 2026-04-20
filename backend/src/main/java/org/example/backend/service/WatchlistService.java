@@ -101,14 +101,14 @@ public class WatchlistService {
     return toWatchlistResponseDto(updated);
   }
 
-  public WatchlistEntryDto addEntry(String watchlistId, String imdbId) {
+  public WatchlistEntryDto addEntry(String watchlistId, String imdbID) {
     Watchlist watchlist = watchlistRepo.findById(watchlistId)
       .orElseThrow(() -> new WatchlistNotFoundException(watchlistId));
 
-    WatchlistEntry entry = watchlistEntryService.getOrCreateWatchlistEntry(imdbId);
+    WatchlistEntry entry = watchlistEntryService.getOrCreateWatchlistEntry(imdbID);
 
     if (watchlist.watchlistEntryIds().contains(entry.id())) {
-      throw new DuplicateWatchlistEntryException(watchlistId, imdbId);
+      throw new DuplicateWatchlistEntryException(watchlistId, imdbID);
     }
 
     List<String> updatedEntryIds = new ArrayList<>(watchlist.watchlistEntryIds());

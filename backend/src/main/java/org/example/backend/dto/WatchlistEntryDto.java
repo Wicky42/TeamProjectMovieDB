@@ -5,7 +5,7 @@ import lombok.With;
 @With
 public record WatchlistEntryDto(
   String id,
-  String imdbId,
+  String imdbID,
   String userRating,
   boolean watched,
   String title,

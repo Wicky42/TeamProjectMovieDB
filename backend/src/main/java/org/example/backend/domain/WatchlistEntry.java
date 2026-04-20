@@ -10,7 +10,7 @@ import lombok.With;
 public record WatchlistEntry(
   @Id
   String id,
-  String imdbId,
+  String imdbID,
   String userRating,
   boolean watched
 ) {

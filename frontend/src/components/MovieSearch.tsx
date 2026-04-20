@@ -21,8 +21,8 @@ const MovieSearch: React.FC = () => {
         const response = await fetch(`/api/movies?title=${encodeURIComponent(searchInput)}`);
 
         if (!response.ok) {
-          setIsLoading(false);
-          throw new Error('Failed to fetch movies');
+          setMovies([]);
+          return;
         }
         const data = await response.json();
         setMovies(data);
@@ -40,6 +40,7 @@ const MovieSearch: React.FC = () => {
   return (
     <>
       <MovieSearchInput
+        id="movie-search"
         label="Search for a specific movie or series"
         placeholder="Search for a movie or series..."
         setSearchInput={setSearchInput}

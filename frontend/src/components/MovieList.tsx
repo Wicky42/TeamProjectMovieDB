@@ -16,7 +16,7 @@ const MovieList: React.FC<MovieListProps> = ({ movies }) => {
       }}
     >
       {movies.map((movie) => (
-        <MovieCard key={movie.imdbId} {...movie} />
+        <MovieCard key={movie.imdbID} {...movie} />
       ))}
     </section>
   );

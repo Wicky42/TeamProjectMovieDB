@@ -1,18 +1,19 @@
 import React from 'react';
 
 interface MovieSearchInputProps {
+  id: string;
   label: string;
   placeholder: string;
   setSearchInput: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const MovieSearchInput: React.FC<MovieSearchInputProps> = ({ label, placeholder, setSearchInput }) => {
+const MovieSearchInput: React.FC<MovieSearchInputProps> = ({ id, label, placeholder, setSearchInput }) => {
   return (
     <>
       <label
-        htmlFor="movie-search"
+        htmlFor={id}
         style={{
-          color: 'var(--accent-strong',
+          color: 'var(--accent-strong)',
           display: 'block',
           fontSize: '18px',
           fontWeight: 'bold',
@@ -23,6 +24,7 @@ const MovieSearchInput: React.FC<MovieSearchInputProps> = ({ label, placeholder,
         {label}
       </label>
       <input
+        id={id}
         onChange={e => setSearchInput(e.target.value)}
         type="text"
         placeholder={placeholder}

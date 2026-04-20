@@ -71,3 +71,133 @@
   margin-top: 14px;
   font-size: 1rem;
 }
+
+.movie-card__watchlist-button {
+  align-self: flex-start;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0f766e, #1e3a8a);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.movie-card__watchlist-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+}
+
+.watchlist-modal {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 18px;
+  padding: 1.25rem;
+  background: linear-gradient(180deg, #10182a, #152040);
+  border: 1px solid rgba(77, 175, 255, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.watchlist-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.watchlist-modal__header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.watchlist-modal__close {
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.watchlist-modal__state {
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+}
+
+.watchlist-modal__state.error {
+  color: #fca5a5;
+}
+
+.watchlist-modal__state.success {
+  color: #86efac;
+}
+
+.watchlist-modal__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.watchlist-modal__item {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(77, 175, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(8, 12, 24, 0.85);
+  color: white;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.watchlist-modal__item:hover:not(:disabled) {
+  border-color: #4dafff;
+  background: rgba(77, 175, 255, 0.08);
+}
+
+.watchlist-modal__item:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.watchlist-modal__item-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.watchlist-modal__item-title {
+  font-weight: 600;
+}
+
+.watchlist-modal__item-count {
+  font-size: 0.85rem;
+  color: #a9cfff;
+}
+
+.watchlist-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.watchlist-modal__backdrop-button {
+  position: absolute;
+  inset: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+

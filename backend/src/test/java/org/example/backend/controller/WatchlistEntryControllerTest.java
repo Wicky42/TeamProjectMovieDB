@@ -72,7 +72,7 @@ public class WatchlistEntryControllerTest {
       .andExpect(status().isOk())
       .andExpect(content().contentType(MediaType.APPLICATION_JSON))
       .andExpect(jsonPath("$.id").value("WE-1"))
-      .andExpect(jsonPath("$.imdbId").value("tt1375666"))
+      .andExpect(jsonPath("$.imdbID").value("tt1375666"))
       .andExpect(jsonPath("$.userRating").value("9"))
       .andExpect(jsonPath("$.watched").value(true));
   }
