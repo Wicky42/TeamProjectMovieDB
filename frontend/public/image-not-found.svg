@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="450" rx="12" fill="url(#bg)"/>
+  <g transform="translate(150,185)" text-anchor="middle">
+    <rect x="-32" y="-50" width="64" height="52" rx="6" fill="none" stroke="#4a5568" stroke-width="2.5"/>
+    <circle cx="-14" cy="-34" r="6" fill="none" stroke="#4a5568" stroke-width="2"/>
+    <polyline points="-28,-8 -8,-28 8,-12 18,-20 28,-8" fill="none" stroke="#4a5568" stroke-width="2" stroke-linejoin="round"/>
+    <text y="36" fill="#e2e8f0" font-family="'Segoe UI',system-ui,sans-serif" font-size="20" font-weight="700" letter-spacing="0.5">No Poster</text>
+    <text y="60" fill="#718096" font-family="'Segoe UI',system-ui,sans-serif" font-size="14" font-weight="400">Image not available</text>
+  </g>
+</svg>

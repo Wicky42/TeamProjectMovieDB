@@ -23,11 +23,25 @@ const MovieCard: React.FC<MovieCardProps> = ({
                                                plot,
                                              }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [posterSrc, setPosterSrc] = useState("/image-not-found.svg");
   const [watchlists, setWatchlists] = useState<WatchlistResponse[]>([]);
   const [isLoadingWatchlists, setIsLoadingWatchlists] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    if (!poster || poster === "N/A") return;
+
+    fetch(poster, { method: "HEAD" })
+        .then((res) => {
+          const contentType = res.headers.get("content-type") ?? "";
+          if (res.ok && contentType.startsWith("image/")) {
+            setPosterSrc(poster);
+          }
+        })
+        .catch(() => { /* keep fallback */ });
+  }, [poster]);
 
   useEffect(() => {
     if (!isModalOpen) return;
@@ -115,7 +129,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
       <>
         <article className="movie-card">
           <div className="movie-card__poster-wrapper">
-            <img className="movie-card__poster" src={poster} alt={title} />
+            <img
+                className="movie-card__poster"
+                src={posterSrc}
+                alt={title}
+            />
           </div>
 
           <div className="movie-card__content">

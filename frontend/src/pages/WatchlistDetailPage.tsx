@@ -18,6 +18,11 @@ export default function WatchlistDetailPage() {
     const [deletingEntryId, setDeletingEntryId] = useState<string | null>(null);
     const [isDeletingWatchlist, setIsDeletingWatchlist] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editName, setEditName] = useState("");
+    const [editDescription, setEditDescription] = useState("");
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [editError, setEditError] = useState("");
 
     useEffect(() => {
         const fetchWatchlist = async () => {
@@ -184,6 +189,43 @@ export default function WatchlistDetailPage() {
         }
     };
 
+    const handleOpenEditModal = () => {
+        if (!watchlist) return;
+        setEditName(watchlist.name);
+        setEditDescription(watchlist.description || "");
+        setEditError("");
+        setIsEditModalOpen(true);
+    };
+
+    const handleConfirmEdit = async () => {
+        if (!watchlistId) return;
+
+        try {
+            setIsUpdating(true);
+            setEditError("");
+
+            const response = await fetch(`/api/watchlists/${watchlistId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: editName.trim(), description: editDescription.trim() }),
+            });
+
+            if (!response.ok) {
+                setEditError("Watchlist could not be updated.");
+                return;
+            }
+
+            const updated: WatchlistResponse = await response.json();
+            setWatchlist(updated);
+            setIsEditModalOpen(false);
+        } catch (err) {
+            console.error(err);
+            setEditError("Watchlist could not be updated.");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
     const handleCancelDelete = () => {
         setIsDeleteConfirmOpen(false);
     };
@@ -212,6 +254,14 @@ export default function WatchlistDetailPage() {
                     <h1 className="watchlist-detail-page__title">{watchlist.name}</h1>
                     <button
                         type="button"
+                        className="watchlist-detail-page__edit-button"
+                        onClick={handleOpenEditModal}
+                        title="Edit this watchlist"
+                    >
+                        {isDeletingWatchlist ? "Editing..." : "Edit Watchlist"}
+                    </button>
+                    <button
+                        type="button"
                         className="watchlist-detail-page__delete-button"
                         onClick={handleDeleteWatchlist}
                         disabled={isDeletingWatchlist}
@@ -219,6 +269,7 @@ export default function WatchlistDetailPage() {
                     >
                         {isDeletingWatchlist ? "Deleting..." : "Delete Watchlist"}
                     </button>
+
                 </div>
                 <p className="watchlist-detail-page__description">
                     {watchlist.description || "No description available."}
@@ -341,6 +392,77 @@ export default function WatchlistDetailPage() {
                             disabled={isDeletingWatchlist}
                         >
                             {isDeletingWatchlist ? "Deleting..." : "Delete"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {isEditModalOpen && (
+            <div className="watchlist-edit-modal__backdrop">
+                <button
+                    type="button"
+                    className="watchlist-edit-modal__backdrop-button"
+                    aria-label="Close edit modal"
+                    onClick={() => setIsEditModalOpen(false)}
+                />
+
+                <div
+                    className="watchlist-edit-modal"
+                    aria-modal="true"
+                    aria-label="Edit Watchlist"
+                >
+                    <h2 className="watchlist-edit-modal__title">Edit Watchlist</h2>
+
+                    <div className="watchlist-edit-modal__field">
+                        <label htmlFor="watchlist-name" className="watchlist-edit-modal__label">
+                            Watchlist Name
+                        </label>
+                        <input
+                            id="watchlist-name"
+                            type="text"
+                            className="watchlist-edit-modal__input"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            disabled={isUpdating}
+                        />
+                    </div>
+
+                    <div className="watchlist-edit-modal__field">
+                        <label htmlFor="watchlist-description" className="watchlist-edit-modal__label">
+                            Description
+                        </label>
+                        <textarea
+                            id="watchlist-description"
+                            className="watchlist-edit-modal__textarea"
+                            value={editDescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                            disabled={isUpdating}
+                        />
+                    </div>
+
+                    {editError && (
+                        <p className="watchlist-edit-modal__error">
+                            {editError}
+                        </p>
+                    )}
+
+                    <div className="watchlist-edit-modal__actions">
+                        <button
+                            type="button"
+                            className="watchlist-edit-modal__cancel-button"
+                            onClick={() => setIsEditModalOpen(false)}
+                            disabled={isUpdating}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="button"
+                            className="watchlist-edit-modal__save-button"
+                            onClick={handleConfirmEdit}
+                            disabled={isUpdating}
+                        >
+                            {isUpdating ? "Updating..." : "Save Changes"}
                         </button>
                     </div>
                 </div>
