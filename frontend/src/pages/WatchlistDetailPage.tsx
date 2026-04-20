@@ -201,7 +201,10 @@ export default function WatchlistDetailPage() {
                                         onClick={() => handleRemoveEntry(entry.id)}
                                         disabled={deletingEntryId === entry.id}
                                     >
-                                        {deletingEntryId === entry.id ? "Deleting movie..." : "Remove Movie"}
+                                        {deletingEntryId === entry.id ?
+                                            `Deleting ${entry.type.charAt(0).toUpperCase() + entry.type.slice(1).toLowerCase()}...` :
+                                            `Remove ${entry.type.charAt(0).toUpperCase() + entry.type.slice(1).toLowerCase()}`
+                                        }
                                     </button>
                                 </div>
 
