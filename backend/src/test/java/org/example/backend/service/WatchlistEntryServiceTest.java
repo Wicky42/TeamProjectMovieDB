@@ -310,4 +310,76 @@ class WatchlistEntryServiceTest {
     assertEquals("tt1375666", result.getFirst().imdbID());
     assertEquals("Unknown title", result.getFirst().title());
   }
+
+  @Test
+  void findEntries_returnsAllEntries_whenWatchedIsNull() {
+    WatchlistEntry watchedEntry = validWatchlistEntry()
+        .withId("WE-1")
+        .withImdbID("tt0111161")
+        .withWatched(true);
+    WatchlistEntry unwatchedEntry = validWatchlistEntry()
+        .withId("WE-2")
+        .withImdbID("tt0068646")
+        .withWatched(false);
+
+    when(watchlistEntryRepo.findAll()).thenReturn(List.of(watchedEntry, unwatchedEntry));
+    when(movieService.createMovieResponseDtoFromImdbId("tt0111161"))
+        .thenThrow(new RuntimeException("OMDb Fehler: Incorrect IMDb ID."));
+    when(movieService.createMovieResponseDtoFromImdbId("tt0068646"))
+        .thenThrow(new RuntimeException("OMDb Fehler: Incorrect IMDb ID."));
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(null);
+
+    assertEquals(2, result.size());
+    assertEquals("WE-1", result.get(0).id());
+    assertEquals("tt0111161", result.get(0).imdbID());
+    assertEquals(true, result.get(0).watched());
+    assertEquals("WE-2", result.get(1).id());
+    assertEquals("tt0068646", result.get(1).imdbID());
+    assertEquals(false, result.get(1).watched());
+    verify(watchlistEntryRepo).findAll();
+    verifyNoMoreInteractions(watchlistEntryRepo);
+  }
+
+  @Test
+  void findEntries_returnsOnlyWatchedEntries_whenWatchedIsTrue() {
+    WatchlistEntry watchedEntry = validWatchlistEntry()
+        .withId("WE-1")
+        .withImdbID("tt0468569")
+        .withWatched(true);
+
+    when(watchlistEntryRepo.findByWatched(true)).thenReturn(List.of(watchedEntry));
+    when(movieService.createMovieResponseDtoFromImdbId("tt0468569"))
+        .thenThrow(new RuntimeException("OMDb Fehler: Incorrect IMDb ID."));
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(true);
+
+    assertEquals(1, result.size());
+    assertEquals("WE-1", result.getFirst().id());
+    assertEquals("tt0468569", result.getFirst().imdbID());
+    assertEquals(true, result.getFirst().watched());
+    verify(watchlistEntryRepo).findByWatched(true);
+    verifyNoMoreInteractions(watchlistEntryRepo);
+  }
+
+  @Test
+  void findEntries_returnsOnlyUnwatchedEntries_whenWatchedIsFalse() {
+    WatchlistEntry unwatchedEntry = validWatchlistEntry()
+        .withId("WE-1")
+        .withImdbID("tt0109830")
+        .withWatched(false);
+
+    when(watchlistEntryRepo.findByWatched(false)).thenReturn(List.of(unwatchedEntry));
+    when(movieService.createMovieResponseDtoFromImdbId("tt0109830"))
+        .thenThrow(new RuntimeException("OMDb Fehler: Incorrect IMDb ID."));
+
+    List<WatchlistEntryDto> result = watchlistEntryService.findEntries(false);
+
+    assertEquals(1, result.size());
+    assertEquals("WE-1", result.getFirst().id());
+    assertEquals("tt0109830", result.getFirst().imdbID());
+    assertEquals(false, result.getFirst().watched());
+    verify(watchlistEntryRepo).findByWatched(false);
+    verifyNoMoreInteractions(watchlistEntryRepo);
+  }
 }

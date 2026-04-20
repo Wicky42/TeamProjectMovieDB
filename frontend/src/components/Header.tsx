@@ -1,8 +1,9 @@
 import watchyLogo from '../assets/watchy_logo.png';
+import type { FC } from "react";
 import { Link } from "react-router-dom";
 import "./Header.css";
 
-const Header: React.FC = () => (
+const Header: FC = () => (
     <header className="header">
         <div className="header__brand">
             <img src={watchyLogo} alt="Watchy Logo" className="header__logo" />

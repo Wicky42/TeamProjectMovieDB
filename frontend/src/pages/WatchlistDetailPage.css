@@ -188,7 +188,19 @@
     padding: 1rem;
 }
 
+.watchlist-delete-modal__backdrop-button {
+    position: absolute;
+    inset: 0;
+    border: none;
+    padding: 0;
+    background: transparent;
+    appearance: none;
+    cursor: pointer;
+}
+
 .watchlist-delete-modal {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 450px;
     border-radius: 18px;
