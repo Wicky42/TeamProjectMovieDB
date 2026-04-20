@@ -8,6 +8,7 @@ import { Routes, Route } from "react-router-dom";
 import CreateWatchlistPage from "./pages/CreateWatchlistPage";
 import WatchlistsPage from "./pages/WatchlistsPage";
 import WatchlistDetailPage from "./pages/WatchlistDetailPage";
+import WatchedAndUnwatchedDetailsPage from "./pages/WatchedAndUnwatchedDetailsPage";
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
                   element={<CreateWatchlistPage />}
               />
               <Route path="/watchlists/:watchlistId" element={<WatchlistDetailPage />} />
+              <Route path="/watchlists/watched" element={<WatchedAndUnwatchedDetailsPage />} />
+              <Route path="/watchlists/unwatched" element={<WatchedAndUnwatchedDetailsPage />} />
               <Route path="/watchlists" element={<WatchlistsPage />} />
           </Routes>
       </main>
