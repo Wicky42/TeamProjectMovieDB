@@ -38,8 +38,8 @@ const MovieCard: React.FC<MovieCardProps> = ({
       }
     };
 
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
+    globalThis.addEventListener("keydown", handleEscape);
+    return () => globalThis.removeEventListener("keydown", handleEscape);
   }, [isModalOpen]);
 
   useEffect(() => {
@@ -140,7 +140,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
         </article>
 
         {isModalOpen && (
-            <div className="watchlist-modal__backdrop" role="presentation">
+            <div className="watchlist-modal__backdrop">
               <button
                   type="button"
                   className="watchlist-modal__backdrop-button"
@@ -150,7 +150,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
 
               <div
                   className="watchlist-modal"
-                  role="dialog"
                   aria-modal="true"
                   aria-label="Select a Watchlist"
               >

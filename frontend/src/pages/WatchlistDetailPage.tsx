@@ -236,10 +236,9 @@ export default function WatchlistDetailPage() {
 
                 <div
                     className="watchlist-delete-modal"
-                    role="dialog"
+                    // role="dialog"
                     aria-modal="true"
                     aria-label="Delete Watchlist Confirmation"
-                    onClick={(e) => e.stopPropagation()}
                 >
                     <h2 className="watchlist-delete-modal__title">Delete Watchlist</h2>
                     <p className="watchlist-delete-modal__message">
