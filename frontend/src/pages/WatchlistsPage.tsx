@@ -17,8 +17,9 @@ export default function WatchlistsPage() {
                 const response = await fetch("/api/watchlists");
                 if (!response.ok) {
                     const body = await response.text();
-                    setError(`Could not load watchlists. ${response.status} ${response.statusText}${body ? ` - ${body}` : ""}`);
-                    return;
+                    const details = body ? ` - ${body}` : "";
+                    const message = `Could not load watchlists. ${response.status} ${response.statusText}${details}`;
+                    setError(message);
                 }
 
                 const data: WatchlistResponse[] = await response.json();

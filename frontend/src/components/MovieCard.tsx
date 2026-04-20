@@ -140,7 +140,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
         </article>
 
         {isModalOpen && (
-            <div className="watchlist-modal__backdrop">
+            <div className="watchlist-modal__backdrop" role="presentation">
               <button
                   type="button"
                   className="watchlist-modal__backdrop-button"
@@ -154,15 +154,6 @@ const MovieCard: React.FC<MovieCardProps> = ({
                   aria-modal="true"
                   aria-label="Select a Watchlist"
               >
-                <div className="watchlist-modal__header">
-                  <h3>Select a Watchlist</h3>
-                  <button
-                      className="watchlist-modal__close"
-                      onClick={() => setIsModalOpen(false)}
-                  >
-                    ✕
-                  </button>
-                </div>
 
                 {isLoadingWatchlists && (
                     <p className="watchlist-modal__state">Loading watchlists...</p>

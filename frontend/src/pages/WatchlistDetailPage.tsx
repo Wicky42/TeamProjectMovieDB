@@ -226,22 +226,20 @@ export default function WatchlistDetailPage() {
         </section>
 
         {isDeleteConfirmOpen && (
-            <div
-                className="watchlist-delete-modal__backdrop"
-                onClick={handleCancelDelete}
-                onKeyDown={(e) => {
-                    if (e.key === "Escape") {
-                        handleCancelDelete();
-                    }
-                }}
-                role="presentation"
-            >
+            <div className="watchlist-delete-modal__backdrop">
+                <button
+                    type="button"
+                    className="watchlist-delete-modal__backdrop-button"
+                    aria-label="Close modal"
+                    onClick={handleCancelDelete}
+                />
+
                 <div
                     className="watchlist-delete-modal"
-                    onClick={(e) => e.stopPropagation()}
                     role="dialog"
                     aria-modal="true"
                     aria-label="Delete Watchlist Confirmation"
+                    onClick={(e) => e.stopPropagation()}
                 >
                     <h2 className="watchlist-delete-modal__title">Delete Watchlist</h2>
                     <p className="watchlist-delete-modal__message">
