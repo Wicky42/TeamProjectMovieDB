@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { WatchlistResponse } from "../types/Watchlist";
 import "./WatchlistDetailPage.css";
+import {FormControlLabel, FormGroup, Rating, Switch} from "@mui/material";
+import StarIcon from '@mui/icons-material/Star';
+
+
 
 export default function WatchlistDetailPage() {
     const { watchlistId } = useParams();
@@ -125,6 +129,61 @@ export default function WatchlistDetailPage() {
         }
     };
 
+    const handleWatchedChange = async (entryId: string, watched: boolean) => {
+        try {
+            const response = await fetch(`/api/entries/${entryId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ watched }),
+            });
+
+            if (!response.ok) {
+                console.error("Failed to update watched status");
+                return;
+            }
+
+            setWatchlist((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    entries: prev.entries.map((entry) =>
+                        entry.id === entryId ? { ...entry, watched } : entry
+                    ),
+                };
+            });
+        } catch (err) {
+            console.error("Failed to update watched status", err);
+        }
+    };
+
+    const handleEntryRating = async (entryId: string, newValue: number | null) => {
+        const userRating = newValue !== null ? String(newValue) : "0";
+        try {
+            const response = await fetch(`/api/entries/${entryId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userRating }),
+            });
+
+            if (!response.ok) {
+                console.error("Failed to update rating");
+                return;
+            }
+
+            setWatchlist((prev) => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    entries: prev.entries.map((entry) =>
+                        entry.id === entryId ? { ...entry, userRating } : entry
+                    ),
+                };
+            });
+        } catch (err) {
+            console.error("Failed to update rating", err);
+        }
+    };
+
     const handleCancelDelete = () => {
         setIsDeleteConfirmOpen(false);
     };
@@ -221,6 +280,24 @@ export default function WatchlistDetailPage() {
                                         ? `${entry.plot.slice(0, 160)}...`
                                         : "No plot available."}
                                 </p>
+
+                                <div className="watchlist-entry-card__user-actions">
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={<Switch checked={entry.watched} onChange={(e) => handleWatchedChange(entry.id, e.target.checked)} />}
+                                            label="Watched"
+                                        />
+                                    </FormGroup>
+                                    <Rating
+                                        name={`rating-${entry.id}`}
+                                        value={parseFloat(entry.userRating) || 0}
+                                        precision={0.5}
+                                        onChange={(_event, newValue) => handleEntryRating(entry.id, newValue)}
+                                        emptyIcon={
+                                            <StarIcon sx={{ color: 'transparent', stroke: 'white', strokeWidth: 1.5 }} />
+                                        }
+                                    />
+                                </div>
                             </div>
                         </article>
                     ))}
