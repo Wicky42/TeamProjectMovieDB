@@ -73,31 +73,10 @@ public class WatchlistEntryService {
   public List<WatchlistEntryDto> createWatchListEntryDtoList(List<String> entryIds) {
     return entryIds.stream()
       .map(id -> watchlistEntryRepo.findById(id)
-        .map(this::toWatchlistEntryDtoSafely)
+        .map(this::toWatchlistEntryDto)
         .orElseThrow(() -> new WatchlistEntryNotFoundException(id))
       )
       .toList();
-  }
-
-  private WatchlistEntryDto toWatchlistEntryDtoSafely(WatchlistEntry entry) {
-    try {
-      return toWatchlistEntryDto(entry);
-    } catch (RuntimeException ex) {
-      return new WatchlistEntryDto(
-        entry.id(),
-        entry.imdbID(),
-        entry.userRating(),
-        entry.watched(),
-        "Unknown title",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
-      );
-    }
   }
 
   public List<WatchlistEntryDto> findEntries(Boolean watched) {
