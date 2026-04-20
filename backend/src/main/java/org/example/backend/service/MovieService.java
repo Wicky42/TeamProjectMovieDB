@@ -50,11 +50,11 @@ public class MovieService {
         return toMovieResponseDto(omdbClient.findByImdbId(openAiResponse));
     }
 
-    public MovieResponseDto createMovieResponseDtoFromImdbId(String imdbId) {
-        OmdbMovieDetailsDto response = omdbClient.findByImdbId(imdbId);
+    public MovieResponseDto createMovieResponseDtoFromImdbId(String imdbID) {
+        OmdbMovieDetailsDto response = omdbClient.findByImdbId(imdbID);
 
         if (response == null || !"True".equalsIgnoreCase(response.getResponse())) {
-            throw new MovieNotFoundException(imdbId);
+            throw new MovieNotFoundException(imdbID);
         }
 
         return toMovieResponseDto(response);

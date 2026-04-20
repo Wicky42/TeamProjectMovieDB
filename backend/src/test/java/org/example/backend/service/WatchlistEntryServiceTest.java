@@ -83,20 +83,20 @@ class WatchlistEntryServiceTest {
 
   @Test
   void getOrCreateWatchlistEntry_createsAndReturnsEntry_whenEntryDoesNotExist() {
-    String imdbId = "tt1375666";
+    String imdbID = "tt1375666";
     WatchlistEntry newEntry = new WatchlistEntry(
             "WE-1",
-            imdbId,
+            imdbID,
             "",
             false
     );
 
-    when(watchlistEntryRepo.findByImdbID(imdbId)).thenReturn(Optional.empty());
+    when(watchlistEntryRepo.findByImdbID(imdbID)).thenReturn(Optional.empty());
     when(idService.generateWatchlistEntryId()).thenReturn("WE-1");
     when(watchlistEntryRepo.save(newEntry)).thenReturn(newEntry);
 
-    assertEquals(newEntry, watchlistEntryService.getOrCreateWatchlistEntry(imdbId));
-    verify(watchlistEntryRepo).findByImdbID(imdbId);
+    assertEquals(newEntry, watchlistEntryService.getOrCreateWatchlistEntry(imdbID));
+    verify(watchlistEntryRepo).findByImdbID(imdbID);
     verify(idService).generateWatchlistEntryId();
     verify(watchlistEntryRepo).save(newEntry);
     verifyNoMoreInteractions(idService, movieService, watchlistEntryRepo);

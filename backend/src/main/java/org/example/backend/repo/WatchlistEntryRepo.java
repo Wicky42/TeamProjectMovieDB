@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WatchlistEntryRepo extends MongoRepository<WatchlistEntry, String> {
-  Optional<WatchlistEntry> findByImdbID(String imdbId);
+  Optional<WatchlistEntry> findByImdbID(String imdbID);
   List<WatchlistEntry> findAllByWatched(Boolean watched);
 }

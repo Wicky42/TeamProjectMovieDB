@@ -51,8 +51,8 @@ class OpenAiClientTest {
     // -------------------------------------------------------
 
     /** Baut eine minimal gültige OpenAIResponse für Tests. */
-    private OpenAIResponse buildResponse(String imdbId) {
-        OpenAIMessage message = new OpenAIMessage("assistant", imdbId);
+    private OpenAIResponse buildResponse(String imdbID) {
+        OpenAIMessage message = new OpenAIMessage("assistant", imdbID);
         OpenAIChoice choice = new OpenAIChoice(0, message);
         return new OpenAIResponse("gpt-4o-mini", java.util.List.of(choice));
     }

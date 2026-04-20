@@ -35,11 +35,11 @@ public class OmdbClient {
         return response;
     }
 
-    public OmdbMovieDetailsDto findByImdbId(String imdbId) {
+    public OmdbMovieDetailsDto findByImdbId(String imdbID) {
         OmdbMovieDetailsDto response = restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .queryParam("apikey", apiKey)
-                        .queryParam("i", imdbId)
+                        .queryParam("i", imdbID)
                         .build())
                 .retrieve()
                 .body(OmdbMovieDetailsDto.class);
